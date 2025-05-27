@@ -363,28 +363,40 @@ exports.ResetPassword = async (req, res) => {
   }
 };
 
-exports.verifyToken = async (req, res) => {
+const jwt = require("jsonwebtoken");
+const Seller = require("../models/Seller");
+const User = require("../models/User");
+
+exports.verifyToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: "Not authorized" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (type == "seller") {
-      const user = await Seller.findById(decoded.id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+
+    // Assuming user type is in the token payload (adjust if needed)
+    const type = decoded.type;
+
+    if (type === "seller") {
+      const seller = await Seller.findById(decoded.id);
+      if (!seller) {
+        return res.status(404).json({ message: "Seller not found" });
       }
-      res.status(200).json({ sellerId: user._id, isVerified: user.isVerified });
+      req.sellerId = seller._id;
+      req.isVerified = seller.isVerified;
+      next();
     } else {
       const user = await User.findById(decoded.id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ userId: user._id, isVerified: user.isVerified });
+      req.userId = user._id;
+      req.isVerified = user.isVerified;
+      next();
     }
   } catch (error) {
     console.error("Error verifying token:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
