@@ -1,5 +1,5 @@
 const Order = require("../models/orderSchema");
-const { decreaseProductStocks } = require("../services/productServices");
+const { decreaseProductStocks } = require("../utils/productUtils");
 
 // Place a new order
 exports.addOrder = async (req, res) => {
