@@ -39,7 +39,7 @@ exports.SignUp = async (req, res) => {
 
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
-      )}/api/auth/verify-email/${newSeller.verificationToken}`;
+      )}/api/auth/verifyEmail/${type}/${newSeller.verificationToken}`;
 
       let mailRes = await sendEmail({
         email: newSeller.email,
@@ -95,7 +95,7 @@ exports.SignUp = async (req, res) => {
 
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
-      )}/api/auth/verify-email/${newUser.verificationToken}`;
+      )}/api/auth/verifyEmail/${type}/${newUser.verificationToken}`;
 
       let mailRes = await sendEmail({
         email: newUser.email,
@@ -187,53 +187,74 @@ exports.SignIn = async (req, res) => {
 // Verify email
 exports.VerifyEmail = async (req, res) => {
   try {
-    let type = req.params.type.toLowerCase();
+    const type = req.params.type.toLowerCase();
     const token = req.params.token;
 
-    if (type == "seller") {
-      const seller = await Seller.findOne({ verificationToken: token });
-      if (!seller) {
-        return res.status(400).json({ message: "Invalid or expired token" });
-      }
-      // Check if the token is expired
-      if (
-        seller.verificationTokenExpiry &&
-        seller.verificationTokenExpiry < Date.now()
-      ) {
-        return res.status(400).json({ message: "Token has expired" });
-      }
+    let account;
 
-      seller.isVerified = true;
-      seller.verificationToken = undefined; // Optional: Clear the token
-      seller.verificationTokenExpiry = undefined; // Optional:
-      await seller.save();
-
-      res.status(200).send("Email verified successfully!");
+    if (type === "seller") {
+      account = await Seller.findOne({ verificationToken: token });
     } else {
-      // Example: Find user by token and verify email
-      const user = await User.findOne({ verificationToken: token });
-
-      if (!user) {
-        return res.status(400).json({ message: "Invalid or expired token" });
-      }
-      // Check if the token is expired
-      if (
-        user.verificationTokenExpiry &&
-        user.verificationTokenExpiry < Date.now()
-      ) {
-        return res.status(400).json({ message: "Token has expired" });
-      }
-
-      user.isVerified = true;
-      user.verificationToken = undefined; // Optional: Clear the token
-      user.verificationTokenExpiry = undefined; // Optional
-      await user.save();
-
-      res.status(200).send("Email verified successfully!");
+      account = await User.findOne({ verificationToken: token });
     }
+
+    if (!account) {
+      return res.status(400).send("<h2>❌ Invalid or expired token</h2>");
+    }
+
+    if (
+      account.verificationTokenExpiry &&
+      account.verificationTokenExpiry < Date.now()
+    ) {
+      return res.status(400).send("<h2>⏰ Token has expired</h2>");
+    }
+
+    account.isVerified = true;
+    account.verificationToken = undefined;
+    account.verificationTokenExpiry = undefined;
+    await account.save();
+
+    res.send(`
+      <html>
+        <head>
+          <title>Email Verified</title>
+          <script>
+            setTimeout(() => {
+              window.close();
+            }, 2000);
+          </script>
+        </head>
+        <body style="text-align: center; font-family: sans-serif; padding-top: 50px;">
+          <h2>✅ Email Verified!</h2>
+          <p>You can return to the original device to continue.</p>
+        </body>
+      </html>
+    `);
   } catch (error) {
     console.error("Error during email verification:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).send("<h2>🚨 Internal Server Error</h2>");
+  }
+};
+
+// route: /api/auth/check-verification/:type/:id
+exports.CheckVerificationStatus = async (req, res) => {
+  try {
+    const { type, id } = req.params;
+
+    if (type === "seller") {
+      const seller = await Seller.findById(id);
+      if (!seller) return res.status(404).json({ verified: false });
+
+      return res.status(200).json({ verified: seller.isVerified });
+    } else {
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ verified: false });
+
+      return res.status(200).json({ verified: user.isVerified });
+    }
+  } catch (error) {
+    console.error("Verification status check error:", error);
+    res.status(500).json({ verified: false });
   }
 };
 
@@ -257,9 +278,8 @@ exports.ForgotPassword = async (req, res) => {
       seller.resetTokenExpiry = Date.now() + 3600000; // 1 hour
       await seller.save();
       // Create reset URL
-      const resetUrl = `${req.protocol}://${req.get(
-        "host"
-      )}/api/auth/reset-password/${resetToken}`;
+      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`; // Frontend URL
+
       // Send reset email
 
       const mailRes = await sendEmail({
@@ -290,9 +310,8 @@ exports.ForgotPassword = async (req, res) => {
       user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
       await user.save();
       // Create reset URL
-      const resetUrl = `${req.protocol}://${req.get(
-        "host"
-      )}/api/auth/reset-password/${resetToken}`;
+      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`; // Frontend URL
+      //frontend URL
       // Send reset email
 
       const mailRes = await sendEmail({

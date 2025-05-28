@@ -9,12 +9,12 @@ const {
 
 const { verifyToken } = require("../controllers/auth");
 
-router.post("/product/:productId/faq", verifyToken, addFAQ);
+router.post("/:productId", verifyToken, addFAQ);
 
-router.put("/faq/:faqId/answer", verifyToken, ansFAQ);
+router.put("/:faqId/answer", verifyToken, ansFAQ);
 
-router.get("/product/:productId/faqs", verifyToken, showFAQsbyProduct);
+router.get("/show/:productId/", verifyToken, showFAQsbyProduct);
 
-router.get("/seller/faqs", verifyToken, showFAQsbySeller);
+router.get("/seller", verifyToken, showFAQsbySeller);
 
 module.exports = router;

@@ -8,6 +8,6 @@ const verifyToken = require("../controllers/auth").verifyToken;
 router.post("/add", verifyToken, orderController.addOrder);
 
 // Route to get seller's orders (requires seller authentication)
-router.get("/seller-orders", verifyToken, orderController.showOrdersBySeller);
+router.get("/sellerOrders", verifyToken, orderController.showOrdersBySeller);
 
 module.exports = router;

@@ -40,7 +40,7 @@ router.get(
 );
 
 router.get(
-  "/seller-products",
+  "/sellerProduct",
   verifyToken,
   productController.getSellerDashboardProducts
 );

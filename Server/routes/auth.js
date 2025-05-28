@@ -9,14 +9,18 @@ router.post("/signup/:type", authController.SignUp);
 router.post("/signin/:type", authController.SignIn);
 
 // Verify email route (type: 'user' or 'seller')
-router.get("/verify-email/:type/:token", authController.VerifyEmail);
+router.get("/verifyEmail/:type/:token", authController.VerifyEmail);
 
 // Forgot password route (type: 'user' or 'seller')
-router.post("/forgot-password/:type", authController.ForgotPassword);
+router.post("/forgotPassword/:type", authController.ForgotPassword);
 
 // Reset password route (type: 'user' or 'seller')
-router.post("/reset-password/:type", authController.ResetPassword);
+router.post("/resetPassword/:type", authController.ResetPassword);
 
 router.post("/logout", authController.logout);
+router.get(
+  "/checkVerification/:type/:id",
+  authController.CheckVerificationStatus
+);
 
 module.exports = router;
