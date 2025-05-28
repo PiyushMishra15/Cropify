@@ -100,6 +100,7 @@ const SignupForm = () => {
         .handleSignup(type, formData)
         .then(() => {
           setIsLoading(false);
+          
         })
         .catch((error) => {
           setIsLoading(false);

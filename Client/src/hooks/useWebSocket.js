@@ -19,3 +19,13 @@ const useStockUpdateSocket = (onStockUpdate) => {
 };
 
 export default useStockUpdateSocket;
+
+//useStockUpdateSocket((updatedProductId, newQuantity) => {
+//setProducts((prevProducts) =>
+// prevProducts.map((product) =>
+// product._id === updatedProductId
+///  ? { ...product, quantity: newQuantity } // 🟢 Update matched product
+//  : product // 🔵 Keep others as is
+// )
+//);
+//});
