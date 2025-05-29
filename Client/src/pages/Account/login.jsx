@@ -11,13 +11,14 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [type, setType] = useState("user");
-  const handleChange1 = (e) => {
-    const { name, value } = e.target;
-    setType(value);
+  const { handleSignin } = useEmailAuth(); // Use hook properly
+
+  const handleTypeChange = (e) => {
+    setType(e.target.value);
   };
+
   const forgot = (e) => {
     e.preventDefault();
-
     useEmailAuth.forgotPassword(type, email);
   };
 
@@ -42,17 +43,14 @@ const LoginForm = () => {
     return valid;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
       setIsLoading(true);
 
-      // Simulate API call
-      useEmailAuth
-        .handleSignin({ email, password }, type)
+      handleSignin({ email, password }, type)
         .then((response) => {
-          // Handle successful login
           console.log("Login successful:", response);
           setIsLoading(false);
         })
@@ -116,7 +114,7 @@ const LoginForm = () => {
           <div className="text-sm">
             <a
               href="/"
-              onClick={(e) => forgot(e)}
+              onClick={forgot}
               className="font-medium text-green-700 hover:text-green-600"
             >
               Forgot password?
@@ -132,32 +130,36 @@ const LoginForm = () => {
           }`}
         >
           {isLoading ? (
-            <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white\"
-              xmlns="http://www.w3.org/2000/svg\"
-              fill="none\"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25\"
-                cx="12\"
-                cy="12\"
-                r="10\"
-                stroke="currentColor\"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          ) : null}
-          {isLoading ? "Signing in..." : "Sign in"}
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Signing in...
+            </>
+          ) : (
+            "Sign in"
+          )}
         </button>
       </form>
 
-      <div className="space-y-1">
+      <div className="space-y-1 mt-4">
         <label
           htmlFor="userType"
           className="block text-sm font-medium text-gray-700"
@@ -169,11 +171,11 @@ const LoginForm = () => {
             <div className="flex-1 flex">
               <input
                 id="farmer"
-                name="seller"
+                name="userType"
                 type="radio"
                 value="seller"
-                checked={type == "seller"}
-                onChange={handleChange}
+                checked={type === "seller"}
+                onChange={handleTypeChange}
                 className="h-4 w-4 mt-1 text-green-700 focus:ring-green-600 border-gray-300"
               />
               <label
@@ -190,16 +192,16 @@ const LoginForm = () => {
             <div className="flex-1 flex ml-6">
               <input
                 id="trader"
-                name="user"
+                name="userType"
                 type="radio"
                 value="user"
                 checked={type === "user"}
-                onChange={handleChange1}
+                onChange={handleTypeChange}
                 className="h-4 w-4 mt-1 text-green-700 focus:ring-green-600 border-gray-300"
               />
               <label
                 htmlFor="trader"
-                className="ml-2  text-sm text-gray-700 flex items-center"
+                className="ml-2 text-sm text-gray-700 flex items-center"
               >
                 Trader
                 <div className="ml-2 bg-amber-100 text-amber-800 text-xs py-0.5 px-2 rounded-full">

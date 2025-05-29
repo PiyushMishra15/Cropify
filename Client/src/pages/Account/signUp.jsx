@@ -9,7 +9,6 @@ const SignupForm = () => {
     email: "",
     contact: "",
     brand: "",
-
     password: "",
     confirmPassword: "",
   });
@@ -28,17 +27,18 @@ const SignupForm = () => {
     userType: "",
   });
 
-  const handleChange1 = () => {
-    const { name, value } = e.target;
-    setType(value);
-  };
-  const handleChange = () => {
-    const { name, value } = e.target;
+  const { handleSignup } = useEmailAuth(); // Use hook properly
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleUserTypeChange = (e) => {
+    setType(e.target.value);
   };
 
   const validateForm = () => {
@@ -50,6 +50,7 @@ const SignupForm = () => {
       password: "",
       confirmPassword: "",
       brand: "",
+      userType: "",
     };
 
     if (!formData.name.trim()) {
@@ -62,6 +63,11 @@ const SignupForm = () => {
       valid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
+      valid = false;
+    }
+
+    if (!formData.contact) {
+      newErrors.contact = "Contact number is required";
       valid = false;
     }
 
@@ -81,8 +87,13 @@ const SignupForm = () => {
       valid = false;
     }
 
-    if (!formData.userType) {
+    if (!type) {
       newErrors.userType = "Please select a user type";
+      valid = false;
+    }
+
+    if (type === "seller" && !formData.brand.trim()) {
+      newErrors.brand = "Brand name is required for sellers";
       valid = false;
     }
 
@@ -90,17 +101,16 @@ const SignupForm = () => {
     return valid;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
       setIsLoading(true);
 
-      useEmailAuth()
-        .handleSignup(type, formData)
+      handleSignup(type, formData)
         .then(() => {
           setIsLoading(false);
-          
+          // success feedback here
         })
         .catch((error) => {
           setIsLoading(false);
@@ -141,19 +151,18 @@ const SignupForm = () => {
         icon={<Phone size={18} className="text-gray-500" />}
         error={errors.contact}
       />
-      if(type === "seller")
-      {
+      {type === "seller" && (
         <FormInput
           label="Brand Name"
           type="text"
           name="brand"
           value={formData.brand}
           onChange={handleChange}
-          placeholder=" Cropify "
+          placeholder="Cropify"
           icon={<Tag size={18} className="text-gray-500" />}
           error={errors.brand}
         />
-      }
+      )}
       <FormInput
         label="Password"
         type={showPassword ? "text" : "password"}
@@ -192,6 +201,7 @@ const SignupForm = () => {
           </button>
         }
       />
+
       <div className="space-y-1">
         <label
           htmlFor="userType"
@@ -199,64 +209,57 @@ const SignupForm = () => {
         >
           I am a
         </label>
-        <div className="flex mt-1 rounded-md shadow-sm">
-          <div className="flex flex-1">
-            <div className="flex-1 flex">
-              <input
-                id="farmer"
-                name="seller"
-                type="radio"
-                value="seller"
-                checked={type == "seller"}
-                onChange={handleChange}
-                className="h-4 w-4 mt-1 text-green-700 focus:ring-green-600 border-gray-300"
-              />
-              <label
-                htmlFor="farmer"
-                className="ml-2 text-sm text-gray-700 flex items-center"
-              >
-                Farmer
-                <div className="ml-2 bg-green-100 text-green-800 text-xs py-0.5 px-2 rounded-full">
-                  Sell crops
-                </div>
-              </label>
-            </div>
+        <div className="flex mt-1">
+          <label className="flex items-center space-x-2 mr-6">
+            <input
+              type="radio"
+              name="userType"
+              value="seller"
+              checked={type === "seller"}
+              onChange={handleUserTypeChange}
+              className="h-4 w-4 text-green-700"
+            />
+            <span className="text-sm text-gray-700">
+              Farmer
+              <span className="ml-2 bg-green-100 text-green-800 text-xs py-0.5 px-2 rounded-full">
+                Sell crops
+              </span>
+            </span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="userType"
+              value="user"
+              checked={type === "user"}
+              onChange={handleUserTypeChange}
+              className="h-4 w-4 text-green-700"
+            />
+            <span className="text-sm text-gray-700">
+              Trader
+              <span className="ml-2 bg-amber-100 text-amber-800 text-xs py-0.5 px-2 rounded-full">
+                Buy crops
+              </span>
+            </span>
+          </label>
+        </div>
+        {errors.userType && (
+          <p className="text-red-500 text-xs">{errors.userType}</p>
+        )}
+      </div>
 
-            <div className="flex-1 flex ml-6">
-              <input
-                id="trader"
-                name="user"
-                type="radio"
-                value="user"
-                checked={type === "user"}
-                onChange={handleChange1}
-                className="h-4 w-4 mt-1 text-green-700 focus:ring-green-600 border-gray-300"
-              />
-              <label
-                htmlFor="trader"
-                className="ml-2  text-sm text-gray-700 flex items-center"
-              >
-                Trader
-                <div className="ml-2 bg-amber-100 text-amber-800 text-xs py-0.5 px-2 rounded-full">
-                  Buy crops
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
+      <div className="text-xs text-gray-500">
+        By creating an account, you agree to our{" "}
+        <a href="#" className="text-green-700 hover:underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="text-green-700 hover:underline">
+          Privacy Policy
+        </a>
+        .
       </div>
-      <div className="mt-1">
-        <div className="text-xs text-gray-500">
-          By creating an account, you agree to our{" "}
-          <a href="#" className="text-green-700 hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-green-700 hover:underline">
-            Privacy Policy
-          </a>
-        </div>
-      </div>
+
       <button
         type="submit"
         disabled={isLoading}
@@ -264,28 +267,28 @@ const SignupForm = () => {
           isLoading ? "opacity-70 cursor-not-allowed" : ""
         }`}
       >
-        {isLoading ? (
+        {isLoading && (
           <svg
-            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white\"
-            xmlns="http://www.w3.org/2000/svg\"
-            fill="none\"
+            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
             viewBox="0 0 24 24"
           >
             <circle
-              className="opacity-25\"
-              cx="12\"
-              cy="12\"
-              r="10\"
-              stroke="currentColor\"
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
               strokeWidth="4"
-            ></circle>
+            />
             <path
               className="opacity-75"
               fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-        ) : null}
+        )}
         {isLoading ? "Creating account..." : "Create Account"}
       </button>
     </form>

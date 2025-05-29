@@ -28,7 +28,7 @@ const FormInput = ({
           id={name}
           value={value}
           onChange={onChange}
-          className={`block w-full ${
+          className={`block text-black w-full ${
             icon ? "pl-10" : "pl-4"
           } pr-10 py-3 sm:text-sm border ${
             error

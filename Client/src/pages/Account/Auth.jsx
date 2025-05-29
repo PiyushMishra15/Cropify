@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
+import LoginForm from "./Login";
+import SignupForm from "./Signup";
 import { Sprout } from "lucide-react";
 
 const AuthPage = () => {

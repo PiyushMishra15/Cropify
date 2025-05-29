@@ -23,4 +23,12 @@ router.get(
   authController.CheckVerificationStatus
 );
 
+router.get("/verifyToken", authController.verifyToken, (req, res) => {
+  res.status(200).json({
+    message: "Token verified",
+    userId: req.userId || req.sellerId,
+    isVerified: req.isVerified,
+  });
+});
+
 module.exports = router;

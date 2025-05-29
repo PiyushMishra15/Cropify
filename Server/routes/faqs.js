@@ -5,7 +5,7 @@ const {
   showFAQsbyProduct,
   showFAQsbySeller,
   ansFAQ,
-} = require("../controllers/faqController");
+} = require("../controllers/faqsController");
 
 const { verifyToken } = require("../controllers/auth");
 

@@ -1,4 +1,4 @@
-const FAQ = require("../models/FAQ");
+const FAQ = require("../models/faqsSchema");
 
 const addFAQ = async (req, res) => {
   try {

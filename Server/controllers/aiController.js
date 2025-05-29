@@ -1,4 +1,4 @@
-const { cropPredictorServices } = require("../services/cropPredictorServices");
+const { cropPredictorServices } = require("../utils/cropPrediction");
 
 // Crop Prediction
 

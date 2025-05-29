@@ -28,15 +28,18 @@ exports.SignUp = async (req, res) => {
       // Save the seller to the databas
       await newSeller.save();
 
-      const token = jwt.sign({ id: newSeller._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      cookie.set("token", token, {
+      const token = jwt.sign(
+        { id: newSeller._id, type: type },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.cookie("token", token, {
         httpOnly: true,
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
       });
-
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
       )}/api/auth/verifyEmail/${type}/${newSeller.verificationToken}`;
@@ -84,15 +87,18 @@ exports.SignUp = async (req, res) => {
 
       await newUser.save();
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      cookie.set("token", token, {
+      const token = jwt.sign(
+        { id: newUser._id, type: type },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.cookie("token", token, {
         httpOnly: true,
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
       });
-
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
       )}/api/auth/verifyEmail/${type}/${newUser.verificationToken}`;
@@ -141,15 +147,18 @@ exports.SignIn = async (req, res) => {
         return res.status(400).json({ message: "Invalid email or password" });
       }
       // Generate JWT token
-      const token = jwt.sign({ id: seller._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      cookie.set("token", token, {
+      const token = jwt.sign(
+        { id: seller._id, type: type },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.cookie("token", token, {
         httpOnly: true,
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
       });
-
       return res.status(200).json({ token, userId: seller._id });
     }
 
@@ -167,10 +176,14 @@ exports.SignIn = async (req, res) => {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      cookie.set("token", token, {
+      const token = jwt.sign(
+        { id: user._id, type: type },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.cookie("token", token, {
         httpOnly: true,
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
@@ -382,37 +395,37 @@ exports.ResetPassword = async (req, res) => {
   }
 };
 
-const jwt = require("jsonwebtoken");
-const Seller = require("../models/Seller");
-const User = require("../models/User");
-
 exports.verifyToken = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+    const token = req.cookies?.token;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Access denied. No token provided." });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Assuming user type is in the token payload (adjust if needed)
-    const type = decoded.type;
+    const { id, type } = decoded;
 
     if (type === "seller") {
-      const seller = await Seller.findById(decoded.id);
+      const seller = await Seller.findById(id);
       if (!seller) {
         return res.status(404).json({ message: "Seller not found" });
       }
       req.sellerId = seller._id;
       req.isVerified = seller.isVerified;
-      next();
     } else {
-      const user = await User.findById(decoded.id);
+      const user = await User.findById(id);
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
       req.userId = user._id;
       req.isVerified = user.isVerified;
-      next();
     }
+
+    next();
   } catch (error) {
     console.error("Error verifying token:", error);
     return res.status(401).json({ message: "Invalid or expired token" });

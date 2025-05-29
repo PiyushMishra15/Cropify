@@ -28,7 +28,7 @@ router.delete(
 );
 
 router.get(
-  "/category/:category/:lng/:lat",
+  "/category/:category/",
   verifyToken,
   productController.getProductDataByCategory
 );

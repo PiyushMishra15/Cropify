@@ -1,7 +1,7 @@
 //to get dateVsSalesData for the dashboard
 //to get cotogerysalesvssalesData for the dashboard
 
-const Order = require("../models/orderModel");
+const Order = require("../models/orderSchema");
 
 const dateFormatter = (date) => {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
