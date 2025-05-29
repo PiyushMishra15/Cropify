@@ -64,12 +64,15 @@ const useFAQs = () => {
   };
 
   // Get FAQs posted to a seller
-  const getFAQsBySeller = async () => {
+  const getFAQsBySeller = async (isAnswered) => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${BASE_URL}/seller`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${BASE_URL}/seller?isAnswered=${isAnswered}`,
+        {
+          withCredentials: true,
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching seller FAQs:", error);

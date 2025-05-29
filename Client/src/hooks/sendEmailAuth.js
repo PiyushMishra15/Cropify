@@ -12,6 +12,11 @@ const useEmailAuth = () => {
   const handleSignup = async (type, formData) => {
     setIsLoading(true);
     try {
+      if (type === "seller") {
+        formData.brandName = formData.brandName.trim();
+        localStorage.setItem("brandName", formData.brandName);
+      }
+
       const response = await axios.post(
         `${baseURL}/auth/signup/${type}`,
         formData
@@ -33,6 +38,10 @@ const useEmailAuth = () => {
         `${baseURL}/auth/signin/${type}`,
         credentials
       );
+      if (type === "seller") {
+        localStorage.setItem("brandName", response.data.brandName);
+      }
+
       alert("Signed in successfully!");
       navigate("/"); // Adjust route
     } catch (error) {

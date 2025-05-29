@@ -34,7 +34,7 @@ function ProductDetails() {
 
   const fetchAllData = async () => {
     setIsMainDataLoading(true);
-    const mainProduct = await getMainProductData(productId);
+    const mainProduct = await  getMainProductData(productId);
     setProductDashboardData(mainProduct);
     await fetchProductDashboardData(productId);
     setIsMainDataLoading(false);

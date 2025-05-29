@@ -159,7 +159,9 @@ exports.SignIn = async (req, res) => {
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
       });
-      return res.status(200).json({ token, userId: seller._id });
+      return res
+        .status(200)
+        .json({ token, userId: seller._id, brandName: seller.brandName });
     }
 
     // Check if user existsels
