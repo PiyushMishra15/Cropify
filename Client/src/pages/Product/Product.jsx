@@ -1,17 +1,24 @@
+// src/pages/Product/Product.jsx
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, X, Loader2 } from "lucide-react";
 import ProductCard from "../../components/ProductCard";
 import ProductSkeleton from "../../components/ProductSkeleton";
-import EmptyStateText from "../../components/EmptyStateText";
-import useProducts from "../../hooks/useProduct";
+import EmptyStatetext from "../../components/EmptyStatetext";
+import useProduct from "../../hooks/useProduct";
 import { getCurrentLocation } from "../../utils/getCurrentLocation";
 import LeafletMap from "../../components/map/LeafletMap";
+
+import { useDispatch } from "react-redux";
+import { setLocation } from "../../redux/slices/userLocationSlice";
 
 function Product() {
   const { type } = useParams();
   const products_per_page = 50;
+
+  const dispatch = useDispatch();
 
   const [deliverableProductData, setDeliverableProductData] = useState([]);
   const [nonDeliverableProductData, setNonDeliverableProductData] = useState(
@@ -25,7 +32,7 @@ function Product() {
   const [selectedLatitude, setSelectedLatitude] = useState(userLocation[1]);
   const [selectedLongitude, setSelectedLongitude] = useState(userLocation[0]);
 
-  const { getProductsByCategory, isLoading } = useProducts();
+  const { getProductsByCategory, isLoading } = useProduct();
 
   useEffect(() => {
     const getLocInfo = async () => {
@@ -34,8 +41,15 @@ function Product() {
         setUserLocation(userCoordinates);
         setSelectedLongitude(userCoordinates[0]);
         setSelectedLatitude(userCoordinates[1]);
+
+        // ✅ Save to Redux
+        dispatch(
+          setLocation({
+            latitude: userCoordinates[1],
+            longitude: userCoordinates[0],
+          })
+        );
       } catch (err) {
-        // Clear data on location fetch failure
         setDeliverableProductData([]);
         setNonDeliverableProductData([]);
       }
@@ -138,7 +152,7 @@ function Product() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <EmptyStateText
+            <EmptyStatetext
               marginY="my-12"
               text="You've reached the end! Check back later or explore other categories."
             />

@@ -3,7 +3,6 @@ import { Sprout, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FormInput from "../ui/FormInput";
 const useEmailAuth = require("../../hooks/sendEmailAuth");
-import axios from "axios";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();

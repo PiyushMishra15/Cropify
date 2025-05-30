@@ -11,8 +11,13 @@ import SellerOrderRequests from "./pages/SellerDashboard/SellerOrderRequests";
 import SellerFAQs from "./pages/SellerDashboard/SellerFAQs";
 import CropSenseAI from "./pages/SellerDashboard/CropSenseAI";
 import SellerProduct from "./pages/SellerProduct";
-import verifyEmail from "./pages/Account/verifyEmail";
+import WaitForVerification from "./pages/Account/verifyEmail";
 import SellerDashboard from "./pages/SellerDashboard";
+import ProductDashboard from "./pages/ProductDetails/ProductDetails";
+import Footer from "./components/Footer";
+import ResetPassword from "./pages/Account/ResetPassword";
+
+import Cart from "./pages/cart";
 
 export default function App() {
   return (
@@ -22,8 +27,11 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<AuthPage />} />
           <Route path="/login" element={<AuthPage />} />
-          <Route exact path="/verifyEmail" element={<verifyEmail />} />
-
+          <Route exact path="/verifyEmail" element={<WaitForVerification />} />
+          <Route
+            path="/resetPassword/:type/:token"
+            element={<ResetPassword />}
+          />
           <Route
             path="/category/:type"
             element={
@@ -66,7 +74,7 @@ export default function App() {
             }
           ></Route>
           <Route
-            path="/orders"
+            path="/order"
             element={
               <PrivateRoute>
                 <SellerOrderRequests />
@@ -111,6 +119,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             exact
             path="/orders"
@@ -120,6 +129,15 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            exact
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <Cart />
+              </PrivateRoute>
+            }
+          ></Route>
         </Routes>
       </Router>
       <Footer />

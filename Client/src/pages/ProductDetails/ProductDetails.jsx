@@ -3,24 +3,42 @@ import { PiSmileySadLight } from "react-icons/pi";
 import { IoBagRemoveOutline } from "react-icons/io5";
 import { CiNoWaitingSign } from "react-icons/ci";
 import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import useProduct from "../../hooks/useProduct";
 import useWebSocket from "../../hooks/useWebSocket";
 import TextSkeleton from "../../components/TextSkeleton";
 import BoxSkeleton from "../../components/BoxSkeleton";
 import ShareButton from "../../components/ShareButton";
 
+// Import your cart actions
+import { addToCart, removeFromCart } from "../../redux/slices/cartSlice";
+
 function ProductDetails() {
   const { productId } = useParams();
+  const dispatch = useDispatch();
+
   const { getProductUserDashboardData, getMainProductData, isLoading } =
     useProduct();
 
   const [productDashboardData, setProductDashboardData] = useState(null);
-  const [cartData, setCartData] = useState([]);
   const [isMainDataLoading, setIsMainDataLoading] = useState(true);
 
-  useWebSocket(setProductDashboardData);
+  // Get cart from redux store
+  const cart = useSelector((state) => state.cart.items);
 
-  const isProductInCart = cartData.some(
+  // Listen for product quantity updates via websocket
+  useWebSocket((updatedProductId, newQuantity) => {
+    setProductDashboardData((prevData) => {
+      if (!prevData) return prevData;
+      if (prevData._id === updatedProductId) {
+        return { ...prevData, quantity: newQuantity };
+      }
+      return prevData;
+    });
+  });
+
+  // Check if product is in cart
+  const isProductInCart = cart.some(
     (item) => item._id === productDashboardData?._id
   );
 
@@ -34,7 +52,7 @@ function ProductDetails() {
 
   const fetchAllData = async () => {
     setIsMainDataLoading(true);
-    const mainProduct = await  getMainProductData(productId);
+    const mainProduct = await getMainProductData(productId);
     setProductDashboardData(mainProduct);
     await fetchProductDashboardData(productId);
     setIsMainDataLoading(false);
@@ -45,6 +63,8 @@ function ProductDetails() {
   }, [productId]);
 
   const addProductToCart = () => {
+    if (!productDashboardData) return;
+
     const newItem = {
       _id: productDashboardData._id,
       sellerId: productDashboardData.sellerId,
@@ -62,14 +82,15 @@ function ProductDetails() {
         productDashboardData.pricePerUnit *
         productDashboardData.minimumOrderQuantity,
     };
-    setCartData([...cartData, newItem]);
+
+    dispatch(addToCart(newItem));
+    alert("Product added to cart successfully!");
   };
 
   const removeProductFromCart = () => {
-    const updatedCart = cartData.filter(
-      (item) => item._id !== productDashboardData?._id
-    );
-    setCartData(updatedCart);
+    if (!productDashboardData) return;
+    dispatch(removeFromCart(productDashboardData._id));
+    alert("Product removed from cart successfully!");
   };
 
   return (
@@ -98,6 +119,7 @@ function ProductDetails() {
             productDashboardData?.brand
           )}
         </h2>
+
         {isMainDataLoading ? (
           <TextSkeleton noOfRows={1} width="w-[100px]" />
         ) : (
@@ -168,6 +190,7 @@ function ProductDetails() {
                 {productDashboardData?.measuringUnit}
               </div>
             )}
+
             {isMainDataLoading ? (
               <TextSkeleton
                 noOfRows={1}

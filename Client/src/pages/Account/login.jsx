@@ -3,6 +3,9 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import FormInput from "../../components/FormInput";
 import useEmailAuth from "../../hooks/sendEmailAuth";
 
+
+
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,10 +51,12 @@ const LoginForm = () => {
 
     if (validateForm()) {
       setIsLoading(true);
+      
 
       handleSignin({ email, password }, type)
         .then((response) => {
           console.log("Login successful:", response);
+
           setIsLoading(false);
         })
         .catch((error) => {

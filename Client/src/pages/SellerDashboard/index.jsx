@@ -30,7 +30,7 @@ const links = [
     text: "Your Orders",
     icon: <PiShoppingBagOpenFill />,
     renderComponent: <SellerOrderRequests />,
-    path: "orders",
+    path: "order",
   },
   {
     text: "Your FAQs",
