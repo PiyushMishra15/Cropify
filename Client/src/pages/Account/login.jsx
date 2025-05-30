@@ -3,9 +3,6 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import FormInput from "../../components/FormInput";
 import useEmailAuth from "../../hooks/sendEmailAuth";
 
-
-
-
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +11,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [type, setType] = useState("user");
-  const { handleSignin } = useEmailAuth(); // Use hook properly
+  const { handleSignin, forgotPassword } = useEmailAuth(); // Use hook properly
 
   const handleTypeChange = (e) => {
     setType(e.target.value);
@@ -22,7 +19,7 @@ const LoginForm = () => {
 
   const forgot = (e) => {
     e.preventDefault();
-    useEmailAuth.forgotPassword(type, email);
+    forgotPassword(type, email);
   };
 
   const validateForm = () => {
@@ -51,7 +48,6 @@ const LoginForm = () => {
 
     if (validateForm()) {
       setIsLoading(true);
-      
 
       handleSignin({ email, password }, type)
         .then((response) => {
@@ -118,7 +114,6 @@ const LoginForm = () => {
 
           <div className="text-sm">
             <a
-              href="/"
               onClick={forgot}
               className="font-medium text-green-700 hover:text-green-600"
             >

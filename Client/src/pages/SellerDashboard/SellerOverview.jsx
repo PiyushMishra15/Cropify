@@ -5,19 +5,20 @@ import { useEffect } from "react";
 import AreaGraph from "../../components/AreaGraph";
 import BarGraph from "../../components/BarGraph";
 import GraphSkeleton from "../../components/GraphSkeleton";
-import useGraph from "../../hooks/useGraph";
+import fetchGraphData from "../../hooks/useGraph";
 import EmptyStatetext from "../../components/EmptyStatetext";
 
 function SellerOverview() {
-  const { fetchGraphData, isLoading } = useGraph();
-
   const [dateVsSales, setDateVsSales] = useState([]);
   const [categoryVsSales, setCategoryVsSales] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const visualizeData = async () => {
+    setIsLoading(true);
     let graphData = await fetchGraphData();
     setDateVsSales(graphData.dateVsSales);
     setCategoryVsSales(graphData.categoryVsSales);
+    setIsLoading(false);
   };
 
   useEffect(() => {

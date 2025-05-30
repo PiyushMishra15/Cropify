@@ -4,7 +4,7 @@ import { MdCancel } from "react-icons/md";
 import LeafletMap from "../../components/map/LeafletMap";
 import { useParams } from "react-router-dom";
 import InputTag from "../../components/InputTag";
-import useProduct from "../../hooks/products/useProduct";
+import useProduct from "../../hooks/useProduct";
 
 function SellerProduct({ productEditData = null }) {
   const { operation } = useParams();

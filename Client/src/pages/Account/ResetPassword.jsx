@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Sprout, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import FormInput from "../ui/FormInput";
-const useEmailAuth = require("../../hooks/sendEmailAuth");
+import FormInput from "../../components/FormInput";
+
+import useEmailAuth from "../../hooks/sendEmailAuth";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -20,12 +21,11 @@ const ResetPassword = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const handleChange = () => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");

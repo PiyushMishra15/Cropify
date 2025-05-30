@@ -16,6 +16,8 @@ import SellerDashboard from "./pages/SellerDashboard";
 import ProductDashboard from "./pages/ProductDetails/ProductDetails";
 import Footer from "./components/Footer";
 import ResetPassword from "./pages/Account/ResetPassword";
+import Order from "./pages/orders";
+import Navbar from "./components/NavBar.jsx";
 
 import Cart from "./pages/cart";
 
@@ -23,6 +25,7 @@ export default function App() {
   return (
     <>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<AuthPage />} />

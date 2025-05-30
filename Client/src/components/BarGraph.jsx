@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { captializeFirstLetter } from "../../utils/helper/captializeFirstLetter";
 
 const BarGraph = ({ data, color, xKey, yKey, title = "Graph Title" }) => {
   const captializeFirstLetter = (string) => {

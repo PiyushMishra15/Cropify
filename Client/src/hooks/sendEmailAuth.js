@@ -13,17 +13,20 @@ const useEmailAuth = () => {
     setIsLoading(true);
     try {
       if (type === "seller") {
-        formData.brandName = formData.brandName.trim();
+        formData.brandName = formData.brandName;
         localStorage.setItem("brandName", formData.brandName);
       }
+      console.log("Form Data:", formData); // Debugging line
 
       const response = await axios.post(
         `${baseURL}/auth/signup/${type}`,
         formData
       );
       alert(response.data.message);
+      localStorage.setItem("token", response.data.token);
       navigate("/verifyEmail"); // Redirect to verification page
     } catch (error) {
+      console.error("Signup error:", error);
       alert(error?.response?.data?.message || "Signup failed");
     } finally {
       setIsLoading(false);
@@ -41,7 +44,7 @@ const useEmailAuth = () => {
       if (type === "seller") {
         localStorage.setItem("brandName", response.data.brandName);
       }
-
+      localStorage.setItem("token", response.data.token);
       alert("Signed in successfully!");
       navigate("/"); // Adjust route
     } catch (error) {

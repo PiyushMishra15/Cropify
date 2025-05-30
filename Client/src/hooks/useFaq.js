@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-const BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:3000/api/faqs";
+const BASE_URL = "http://localhost:3000/api/faqs";
 
 const useFAQs = () => {
   const [isLoading, setIsLoading] = useState(false);

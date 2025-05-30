@@ -2,7 +2,8 @@ const User = require("../models/userModel");
 const Seller = require("../models/sellerModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { sendEmail } = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendEmail"); // No curly braces
+
 const crypto = require("crypto");
 
 // Register a new user
@@ -10,22 +11,22 @@ exports.SignUp = async (req, res) => {
   try {
     let type = req.params.type.toLowerCase();
 
-    if (type == "seller") {
+    if (type === "seller") {
       const seller = await Seller.findOne({ email: req.body.email });
       if (seller) {
         return res.status(400).json({ message: "Seller already exists" });
       }
-      // Create a new seller
+
       const newSeller = new Seller({
         name: req.body.name,
         email: req.body.email,
         password: await bcrypt.hash(req.body.password, 10),
         verificationToken: crypto.randomBytes(32).toString("hex"),
-        verificationTokenExpiry: Date,
+        verificationTokenExpiry: Date.now() + 3600000, // ✅ 1 hour from now
         brandName: req.body.brandName,
         contact: req.body.contact,
       });
-      // Save the seller to the databas
+
       await newSeller.save();
 
       const token = jwt.sign(
@@ -35,19 +36,21 @@ exports.SignUp = async (req, res) => {
           expiresIn: "1h",
         }
       );
+
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "Strict", // Prevent CSRF attacks
-        maxAge: 3600000, // 1 hour
+        sameSite: "Strict",
+        maxAge: 3600000,
       });
+
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
       )}/api/auth/verifyEmail/${type}/${newSeller.verificationToken}`;
 
-      let mailRes = await sendEmail({
+      const mailRes = await sendEmail({
         email: newSeller.email,
         subject: "Verify your email address",
-        message: `Please verify your email: ${verificationUrl}`, // plain text
+        message: `Please verify your email: ${verificationUrl}`,
         template: "mailVerify",
         templateData: {
           name: newSeller.name,
@@ -61,29 +64,27 @@ exports.SignUp = async (req, res) => {
           .json({ message: "Failed to send verification email" });
       } else {
         return res.status(201).json({
-          message: `A verification email has been sent to ${email}. Please verify your account.`,
+          message: `A verification email has been sent to ${newSeller.email}. Please verify your account.`,
         });
       }
     } else {
       const { name, email, password, contact } = req.body;
 
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
       }
-      // Hash the password
+
       const hashedPassword = await bcrypt.hash(password, 10);
-      // Create a new user
+
       const newUser = new User({
         name,
         email,
         password: hashedPassword,
         verificationToken: crypto.randomBytes(32).toString("hex"),
-        verificationTokenExpiry: Date.now() + 3600000, // 1 hour
-        contact: contact,
+        verificationTokenExpiry: Date.now() + 3600000, // ✅ 1 hour from now
+        contact,
       });
-      // Save the user to the database
 
       await newUser.save();
 
@@ -94,19 +95,21 @@ exports.SignUp = async (req, res) => {
           expiresIn: "1h",
         }
       );
+
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "Strict", // Prevent CSRF attacks
-        maxAge: 3600000, // 1 hour
+        sameSite: "Strict",
+        maxAge: 3600000,
       });
+
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
       )}/api/auth/verifyEmail/${type}/${newUser.verificationToken}`;
 
-      let mailRes = await sendEmail({
+      const mailRes = await sendEmail({
         email: newUser.email,
         subject: "Verify your email address",
-        message: `Please verify your email: ${verificationUrl}`, // plain text
+        message: `Please verify your email: ${verificationUrl}`,
         template: "mailVerify",
         templateData: {
           name: newUser.name,
@@ -120,7 +123,7 @@ exports.SignUp = async (req, res) => {
           .json({ message: "Failed to send verification email" });
       } else {
         return res.status(201).json({
-          message: `A verification email has been sent to ${email}. Please verify your account.`,
+          message: `A verification email has been sent to ${newUser.email}. Please verify your account.`,
         });
       }
     }
@@ -276,29 +279,34 @@ exports.CheckVerificationStatus = async (req, res) => {
 // Forgot password
 exports.ForgotPassword = async (req, res) => {
   try {
-    let type = req.params.type.toLowerCase();
+    const type = req.params.type.toLowerCase();
+
     if (type !== "user" && type !== "seller") {
       return res.status(400).json({ message: "Invalid user type" });
     }
-    // Validate request body
+
     const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
     if (type === "seller") {
-      const seller = await Seller.find({ email });
+      const seller = await Seller.findOne({ email });
+
       if (!seller) {
-        return res.status(400).json({ message: "seller not found" });
+        return res.status(400).json({ message: "Seller not found" });
       }
-      // Generate reset token
+
       const resetToken = crypto.randomBytes(32).toString("hex");
       seller.resetToken = resetToken;
       seller.resetTokenExpiry = Date.now() + 3600000; // 1 hour
-      await seller.save();
-      // Create reset URL
-      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`; // Frontend URL
+      await seller.save(); // ✅ Save changes
 
-      // Send reset email
+      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`;
 
       const mailRes = await sendEmail({
-        email: email,
+        email,
         subject: "Reset Your Password",
         message: `Reset your password here: ${resetUrl}`,
         template: "resetPassword",
@@ -307,30 +315,30 @@ exports.ForgotPassword = async (req, res) => {
           resetUrl,
         },
       });
+
       if (!mailRes) {
         return res.status(500).json({ message: "Failed to send reset email" });
       }
+
       return res.status(200).json({
         message: `A password reset email has been sent to ${seller.email}. Please check your inbox.`,
       });
     } else {
-      // Check if user exists
-      const user = await User.find({ email });
+      const user = await User.findOne({ email });
+
       if (!user) {
         return res.status(400).json({ message: "User not found" });
       }
-      // Generate reset token
+
       const resetToken = crypto.randomBytes(32).toString("hex");
       user.resetToken = resetToken;
       user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
-      await user.save();
-      // Create reset URL
-      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`; // Frontend URL
-      //frontend URL
-      // Send reset email
+      await user.save(); // ✅ Save changes
+
+      const resetUrl = `http://localhost:5173/resetPassword/${type}/${resetToken}`;
 
       const mailRes = await sendEmail({
-        email: email,
+        email,
         subject: "Reset Your Password",
         message: `Reset your password here: ${resetUrl}`,
         template: "resetPassword",
@@ -339,9 +347,12 @@ exports.ForgotPassword = async (req, res) => {
           resetUrl,
         },
       });
+      console.log("Mail response:", mailRes);
+
       if (!mailRes) {
         return res.status(500).json({ message: "Failed to send reset email" });
       }
+
       return res.status(200).json({
         message: `A password reset email has been sent to ${user.email}. Please check your inbox.`,
       });

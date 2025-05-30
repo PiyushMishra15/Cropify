@@ -12,7 +12,7 @@ import { getCurrentLocation } from "../../utils/getCurrentLocation";
 import LeafletMap from "../../components/map/LeafletMap";
 
 import { useDispatch } from "react-redux";
-import { setLocation } from "../../redux/slices/userLocationSlice";
+import { setLocation } from "../../redux/slices/locationSlice";
 
 function Product() {
   const { type } = useParams();

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Spinner from "../../components/Spinner";
-import useAi from "../../hooks/ai/useAi";
+import predictCrops from "../../hooks/useAi";
 import InputTag from "../../components/InputTag";
 
 const CropSenseAI = () => {
   const [prediction, setPrediction] = useState("");
-  const { predictCrops } = useAi();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:3000/api/ai"; // Adjust base URL as per your environment
 
-export const predictCrops = async (queryParams) => {
+const predictCrops = async (queryParams) => {
   try {
     const response = await axios.get(`${BASE_URL}/predict`, {
       params: {
@@ -20,3 +20,5 @@ export const predictCrops = async (queryParams) => {
     throw error;
   }
 };
+
+export default predictCrops;

@@ -8,7 +8,7 @@ const SignupForm = () => {
     name: "",
     email: "",
     contact: "",
-    brand: "",
+    brandName: "",
     password: "",
     confirmPassword: "",
   });
@@ -23,7 +23,7 @@ const SignupForm = () => {
     contact: "",
     password: "",
     confirmPassword: "",
-    brand: "",
+    brandName: "",
     userType: "",
   });
 
@@ -49,7 +49,7 @@ const SignupForm = () => {
       contact: "",
       password: "",
       confirmPassword: "",
-      brand: "",
+      brandName: "",
       userType: "",
     };
 
@@ -92,8 +92,8 @@ const SignupForm = () => {
       valid = false;
     }
 
-    if (type === "seller" && !formData.brand.trim()) {
-      newErrors.brand = "Brand name is required for sellers";
+    if (type === "seller" && !formData.brandName.trim()) {
+      newErrors.brandName = "Brand name is required for sellers";
       valid = false;
     }
 
@@ -155,8 +155,8 @@ const SignupForm = () => {
         <FormInput
           label="Brand Name"
           type="text"
-          name="brand"
-          value={formData.brand}
+          name="brandName"
+          value={formData.brandName}
           onChange={handleChange}
           placeholder="Cropify"
           icon={<Tag size={18} className="text-gray-500" />}

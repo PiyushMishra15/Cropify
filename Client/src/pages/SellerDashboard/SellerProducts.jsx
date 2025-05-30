@@ -4,7 +4,7 @@ import Spinner from "../../components/Spinner";
 import TableSkeleton from "../../components/TableSkeleton";
 import EmptyStatetext from "../../components/EmptyStatetext";
 
-import useProduct from "../../hooks/products/useProduct";
+import useProduct from "../../hooks/useProduct";
 
 function SellerProducts() {
   const navigate = useNavigate();
