@@ -9,7 +9,7 @@ import SellerOverview from "./pages/SellerDashboard/SellerOverview";
 import SellerProducts from "./pages/SellerDashboard/SellerProducts";
 import SellerOrderRequests from "./pages/SellerDashboard/SellerOrderRequests";
 import SellerFAQs from "./pages/SellerDashboard/SellerFAQs";
-import CropSenseAI from "./pages/SellerDashboard/CropSenseAI";
+import CropSenseAi from "./pages/SellerDashboard/CropSenseAI";
 import SellerProduct from "./pages/SellerProduct";
 import WaitForVerification from "./pages/Account/verifyEmail";
 import SellerDashboard from "./pages/SellerDashboard";
@@ -26,122 +26,134 @@ export default function App() {
     <>
       <Router>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<AuthPage />} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route exact path="/verifyEmail" element={<WaitForVerification />} />
-          <Route
-            path="/resetPassword/:type/:token"
-            element={<ResetPassword />}
-          />
-          <Route
-            path="/category/:type"
-            element={
-              <PrivateRoute>
-                <Product />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/map"
-            element={
-              <PrivateRoute>
-                <ShowMap />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            exact
-            path="/sellerdashboard"
-            element={
-              <PrivateRoute>
-                <SellerDashboard />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/overview"
-            element={
-              <PrivateRoute>
-                <SellerOverview />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/products"
-            element={
-              <PrivateRoute>
-                <SellerProducts />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/order"
-            element={
-              <PrivateRoute>
-                <SellerOrderRequests />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/faqs"
-            element={
-              <PrivateRoute>
-                <SellerFAQs />
-              </PrivateRoute>
-            }
-          ></Route>
+        <main className="pt-16">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage />} />
 
-          <Route exact path="/map/:latitude/:longitude" element={<ShowMap />} />
-          <Route
-            path="/cropsenseAi"
-            element={
-              <PrivateRoute>
-                <CropSenseAI />
-              </PrivateRoute>
-            }
-          ></Route>
+            <Route
+              exact
+              path="/verifyEmail/:type/:id"
+              element={<WaitForVerification />}
+            />
+            <Route
+              path="/resetPassword/:type/:token"
+              element={<ResetPassword />}
+            />
+            <Route
+              path="/category/:type"
+              element={
+                <PrivateRoute>
+                  <Product />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/map"
+              element={
+                <PrivateRoute>
+                  <ShowMap />
+                </PrivateRoute>
+              }
+            ></Route>
 
-          <Route
-            exact
-            path="/sellerdashboard/products/:operation"
-            element={
-              <PrivateRoute>
-                <SellerProduct />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/sellerdashboard"
+              element={
+                <PrivateRoute>
+                  <SellerDashboard />
+                </PrivateRoute>
+              }
+            >
+              <Route
+                path=""
+                element={
+                  <PrivateRoute>
+                    <SellerOverview />
+                  </PrivateRoute>
+                }
+              ></Route>
 
-          <Route
-            exact
-            path="/category/:type/details/:productId"
-            element={
-              <PrivateRoute>
-                <ProductDashboard />
-              </PrivateRoute>
-            }
-          />
+              <Route
+                path="products"
+                element={
+                  <PrivateRoute>
+                    <SellerProducts />
+                  </PrivateRoute>
+                }
+              ></Route>
+              <Route
+                path="order"
+                element={
+                  <PrivateRoute>
+                    <SellerOrderRequests />
+                  </PrivateRoute>
+                }
+              ></Route>
+              <Route
+                path="faqs"
+                element={
+                  <PrivateRoute>
+                    <SellerFAQs />
+                  </PrivateRoute>
+                }
+              ></Route>
+              <Route
+                path="cropsenseAi"
+                element={
+                  <PrivateRoute>
+                    <CropSenseAi />
+                  </PrivateRoute>
+                }
+              ></Route>
 
-          <Route
-            exact
-            path="/orders"
-            element={
-              <PrivateRoute>
-                <Order />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            exact
-            path="/cart"
-            element={
-              <PrivateRoute>
-                <Cart />
-              </PrivateRoute>
-            }
-          ></Route>
-        </Routes>
+              <Route
+                path="products/:operation"
+                element={
+                  <PrivateRoute>
+                    <SellerProduct />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+
+            <Route
+              exact
+              path="/map/:latitude/:longitude"
+              element={<ShowMap />}
+            />
+
+            <Route
+              exact
+              path="/category/:type/details/:productId"
+              element={
+                <PrivateRoute>
+                  <ProductDashboard />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              exact
+              path="/orders"
+              element={
+                <PrivateRoute>
+                  <Order />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              exact
+              path="/cart"
+              element={
+                <PrivateRoute>
+                  <Cart />
+                </PrivateRoute>
+              }
+            ></Route>
+          </Routes>
+        </main>
       </Router>
       <Footer />
     </>

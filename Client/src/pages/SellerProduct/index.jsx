@@ -2,35 +2,37 @@ import { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import { MdCancel } from "react-icons/md";
 import LeafletMap from "../../components/map/LeafletMap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import InputTag from "../../components/InputTag";
 import useProduct from "../../hooks/useProduct";
 
-function SellerProduct({ productEditData = null }) {
+function SellerProduct() {
+  const navigate = useNavigate();
   const { operation } = useParams();
+  const location = useLocation();
+  const productEditData = location.state?.product || null;
   const brandName = localStorage.getItem("brandName");
 
   const { updateProduct, addProduct } = useProduct();
   const [isLoading, setIsLoading] = useState(false);
-
   const isEdit = operation === "edit";
 
   const [lat, setLat] = useState(22.49);
   const [long, setLong] = useState(80.1);
 
   const [formData, setFormData] = useState({
-    image: null,
-    brand: brandName || "",
-    category: "",
-    name: "",
-    description: "",
-    pricePerUnit: "",
-    measuringUnit: "",
-    minimumOrderQuantity: "",
+    image: productEditData?.image || null,
+    brandName: brandName || "",
+    category: productEditData?.category || "",
+    name: productEditData?.name || "",
+    description: productEditData?.description || "",
+    pricePerUnit: productEditData?.pricePerUnit || "",
+    measuringUnit: productEditData?.measuringUnit || "",
+    minimumOrderQuantity: productEditData?.minimumOrderQuantity || "",
     location: { coordinates: [long, lat] },
-    deliveryRadius: "",
-    quantity: "",
-    shelfLife: "",
+    deliveryRadius: productEditData?.deliveryRadius || "",
+    quantity: productEditData?.quantity || "",
+    shelfLife: productEditData?.shelfLife || "",
   });
 
   useEffect(() => {
@@ -51,7 +53,7 @@ function SellerProduct({ productEditData = null }) {
 
       setFormData({
         image,
-        brand: cookies.brandName || "",
+        brandName: brandName || "",
         category,
         name,
         description,
@@ -79,17 +81,27 @@ function SellerProduct({ productEditData = null }) {
   }, [lat, long]);
 
   const handleSubmit = async () => {
-    if (!formData.image) return alert("Please upload product image", "info");
-
+    if (!formData.image) return alert("Please upload product image");
     const [lng, latCoord] = formData.location.coordinates;
-    if (!latCoord || !lng) return alert("Please select location", "info");
+    if (!latCoord || !lng) return alert("Please select location");
 
     setIsLoading(true);
-    if (operation === "add") {
-      await addProduct(formData);
-    } else {
-      await updateProduct(productEditData._id, formData);
+
+    try {
+      let res = null;
+      if (operation === "add") {
+        res = await addProduct(formData);
+      } else if (isEdit && productEditData?._id) {
+        res = await updateProduct(productEditData._id, formData);
+      }
+
+      if (res) {
+        navigate("/sellerDashboard/products");
+      }
+    } catch (error) {
+      console.error("Error submitting product:", error);
     }
+
     setIsLoading(false);
   };
 
@@ -172,7 +184,7 @@ function SellerProduct({ productEditData = null }) {
               Category
             </label>
             <select
-              className="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 outline-cyan-800"
+              className="bg-gray-50 border text-black border-gray-300 text-sm rounded-lg w-full p-2.5 outline-cyan-800"
               value={formData.category}
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
@@ -262,7 +274,7 @@ function SellerProduct({ productEditData = null }) {
           <textarea
             rows={6}
             required
-            className="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 outline-cyan-800"
+            className="bg-gray-50 text-black border border-gray-300 text-sm rounded-lg w-full p-2.5 outline-cyan-800"
             placeholder="Describe your product..."
             value={formData.description}
             onChange={(e) =>

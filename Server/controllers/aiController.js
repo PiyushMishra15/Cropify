@@ -1,4 +1,4 @@
-const { cropPredictorServices } = require("../utils/cropPrediction");
+const cropPredictorServices = require("../utils/cropPrediction");
 
 // Crop Prediction
 
@@ -25,16 +25,17 @@ const predictCrops = async (req, res) => {
     }
 
     const result = await cropPredictorServices({
-      soil,
-      altitudeNum,
-      temperatureNum,
-      humidityNum,
-      rainfallNum,
+      soil: soil.toLowerCase(),
+      altitude: altitudeNum,
+      temperature: temperatureNum,
+      humidity: humidityNum,
+      rainfall: rainfallNum,
     });
-    console.log(result);
-    return res.status(200).send({ message: result });
+
+    console.log("Crop prediction result:", result);
+    return res.status(200).json({ message: result });
   } catch (error) {
-    console.error(error);
+    console.error("Error in predictCrops:", error);
     return res.status(500).send("Something went wrong!");
   }
 };

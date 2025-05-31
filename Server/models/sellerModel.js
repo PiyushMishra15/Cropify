@@ -17,12 +17,12 @@ const sellerSchema = new Schema(
         },
         messages: "Please enter a valid email address",
       },
-      password: {
-        type: String,
-        required: true,
-        min: [6, "Password must be at least 6 characters long"],
-        trim: true,
-      },
+    },
+    password: {
+      type: String,
+      required: true,
+      min: [6, "Password must be at least 6 characters long"],
+      trim: true,
     },
     isVerified: {
       type: Boolean,

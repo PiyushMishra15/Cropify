@@ -1,6 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const genAI = new GoogleGenerativeAI("AIzaSyBpKtchccAEMTdFVzVihOms5rsce_HItAQ");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const cropPredictorServices = async ({
@@ -17,14 +17,24 @@ const cropPredictorServices = async ({
 - Temperature: ${temperatureNum} °C
 - Humidity: ${humidityNum} %
 - Rainfall: ${rainfallNum} mm/year
-Please suggest the most suitable crop(s) for cultivation under these conditions, and provide reasons for your recommendation.`;
+
+List the most suitable crops for cultivation under these conditions. 
+
+For each crop, use the following format:
+
+Crop: <Crop Name>
+Reason: <Reason why it is suitable under these conditions>
+
+Present each crop in a new section.`;
+
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    res.send(text);
+
+    return text; // ✅ Return the result
   } catch (err) {
-    console.log(err);
-    res.send("Unexpected Error!!!");
+    console.error("AI Service Error:", err);
+    throw new Error("AI model prediction failed."); // ✅ throw error to be caught in controller
   }
 };
 

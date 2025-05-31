@@ -2,10 +2,10 @@ const Product = require("../models/productSchema");
 const uploadImageToCloudinary = require("../utils/CloudinaryServices");
 const calculateDistance = require("../utils/calculateDistance");
 
-//add product
 exports.addProduct = async (req, res) => {
   try {
-    req.body.sellerId = req.sellerId;
+    const sellerId = req.cookies?.sellerId;
+    req.body.sellerId = sellerId;
 
     const uploadedImage = req.file;
 
@@ -20,19 +20,19 @@ exports.addProduct = async (req, res) => {
       req.body.image = cloudRes.secure_url;
     } catch (error) {
       console.log(error);
-      res.status(500).send({
+      return res.status(500).send({
         message:
           "There was a problem communicating with Cloudinary during the image upload.",
-      });
+      }); // ✅ Added return
     }
 
-    let product = Product(req.body);
+    let product = new Product(req.body);
     await product.save();
 
-    res.status(200).send({ message: "Product Added Successfully" });
+    return res.status(200).send({ message: "Product Added Successfully" }); // ✅ Also return here
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Something went wrong!" });
+    return res.status(500).send({ message: "Something went wrong!" }); // ✅ Also return here
   }
 };
 
@@ -137,7 +137,7 @@ exports.getProductById = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const sellerId = req.sellerId;
+    const sellerId = req.cookies?.sellerId;
 
     let product = await Product.findById(req.params.productId);
 
@@ -165,26 +165,28 @@ exports.getSellerDashboardProducts = async (req, res) => {
   try {
     const sellerId = req.sellerId;
 
-    let products = await Product.find({ sellerId: sellerId })
+    if (!sellerId) {
+      return res
+        .status(401)
+        .send({ message: "Unauthorized: seller ID missing" });
+    }
+
+    const products = await Product.find({ sellerId })
       .select(
-        "name image brand measuringUnit pricePerUnit minimumOrderQuantity"
+        "name image brand measuringUnit pricePerUnit minimumOrderQuantity  location coordinates sellerId deliveryRadius quantity shelfLife description date"
       )
       .lean();
 
-    if (!products || products.length === 0) {
-      return res.status(404).send({ message: "No products found" });
-    }
-
-    res.status(200).send(products);
+    return res.status(200).send(products);
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Something went wrong!" });
+    console.error("Error in getSellerDashboardProducts:", error);
+    return res.status(500).send({ message: "Something went wrong!" });
   }
 };
 
 exports.updateProduct = async (req, res) => {
   try {
-    const sellerId = req.sellerId;
+    const sellerId = req.cookies?.sellerId;
     console.log(sellerId);
 
     const uploadedImage = req.file;
@@ -197,7 +199,7 @@ exports.updateProduct = async (req, res) => {
         req.body.image = cloudRes.secure_url;
       } catch (error) {
         console.log(error);
-        res.status(500).send({
+        return res.status(500).send({
           message:
             "There was a problem communicating with Cloudinary during the image upload.",
         });

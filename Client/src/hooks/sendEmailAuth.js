@@ -24,7 +24,8 @@ const useEmailAuth = () => {
       );
       alert(response.data.message);
       localStorage.setItem("token", response.data.token);
-      navigate("/verifyEmail"); // Redirect to verification page
+      let id = response.data.userId;
+      navigate(`/verifyEmail/${type}/${id}`); // Redirect to verification page
     } catch (error) {
       console.error("Signup error:", error);
       alert(error?.response?.data?.message || "Signup failed");
@@ -46,7 +47,12 @@ const useEmailAuth = () => {
       }
       localStorage.setItem("token", response.data.token);
       alert("Signed in successfully!");
-      navigate("/"); // Adjust route
+      if (type === "seller") {
+        navigate("/sellerDashboard");
+      } // }
+      else {
+        navigate("/");
+      }
     } catch (error) {
       alert(error?.response?.data?.message || "Signin failed");
     } finally {

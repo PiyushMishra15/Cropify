@@ -28,9 +28,9 @@ function SellerOverview() {
   return (
     <>
       {/* Table Header */}
-      <h1 className="text-sm text-gray-500 mb-4 text-left">
+      <h2 className="text-5xl ml-96 mt-2  font-semibold text-gray-700 mb-6">
         Visualize Tour Sales
-      </h1>
+      </h2>
 
       {isLoading ? (
         <GraphSkeleton noOfBoxes={2} />

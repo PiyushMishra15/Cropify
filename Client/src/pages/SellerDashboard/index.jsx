@@ -10,7 +10,7 @@ import { TbLogout2 } from "react-icons/tb";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import SellerOverview from "./SellerOverview";
 import { RiBardFill } from "react-icons/ri";
-import CropSenseAI from "./CropSenseAI";
+import CropSenseAi from "./CropSenseAI";
 import SendEmailAuth from "../../hooks/sendEmailAuth";
 
 const links = [
@@ -18,7 +18,7 @@ const links = [
     text: "Dashboard",
     icon: <MdDashboard />,
     renderComponent: <SellerOverview />,
-    path: "overview",
+    path: "",
   },
   {
     text: "Your Products",
@@ -41,7 +41,7 @@ const links = [
   {
     text: "CropSense AI",
     icon: <RiBardFill />,
-    renderComponent: <CropSenseAI />,
+    renderComponent: <CropSenseAi />,
     path: "cropsenseAi",
   },
 ];
@@ -52,7 +52,7 @@ const NewSellerDashboard = () => {
   const { handleLogout } = SendEmailAuth();
 
   return (
-    <div className="w-full flex flex-row h-[calc(100vh-50px)]">
+    <div className="w-full  bg-white flex flex-row h-[calc(100vh-50px)]">
       <div className="w-2/12 shadow-sm bg-gray-100 flex justify-between  py-4 px-2 flex-col">
         <div className="flex flex-col gap-2">
           {links.map((link, index) => (

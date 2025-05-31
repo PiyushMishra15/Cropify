@@ -2,29 +2,35 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Leaf, Mail, CheckCircle, Clock } from "lucide-react";
 
-const WaitForVerification = ({ userId, type }) => {
+import { useParams, useNavigate } from "react-router-dom";
+
+const WaitForVerification = () => {
   const [verified, setVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  // Ensure userId and type are provided
+
+  const { id, type } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/auth/checkVerification/${type}/${userId}`
+          `http://localhost:3000/api/auth/checkVerification/${type}/${id}`
         );
         if (res.data.verified) {
           setVerified(true);
           setIsLoading(false);
           clearInterval(interval);
+          navigate("/sellerDashboard"); // Navigate to home after verification
         }
       } catch (err) {
         console.error("Error checking verification status");
       }
-    }, 5000); // check every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [userId, type]);
-
+  }, [id, type, navigate]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-amber-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
@@ -84,8 +90,8 @@ const WaitForVerification = ({ userId, type }) => {
                   Email verified successfully!
                 </p>
                 <p className="text-gray-600">
-                  Your digital garden is ready. You may now log in and start
-                  cultivating your experience.
+                  Your Crop Commerce account is ready! start harvesting the best
+                  deals on seeds, tools, and farm supplies.
                 </p>
               </div>
             ) : (

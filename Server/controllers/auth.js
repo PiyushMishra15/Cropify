@@ -9,32 +9,34 @@ const crypto = require("crypto");
 // Register a new user
 exports.SignUp = async (req, res) => {
   try {
-    let type = req.params.type.toLowerCase();
+    const type = req.params.type.toLowerCase();
+    const { name, email, password, contact, brandName } = req.body;
 
     if (type === "seller") {
-      const seller = await Seller.findOne({ email: req.body.email });
-      if (seller) {
+      const sellerExists = await Seller.findOne({ email });
+      if (sellerExists) {
         return res.status(400).json({ message: "Seller already exists" });
       }
 
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+
       const newSeller = new Seller({
-        name: req.body.name,
-        email: req.body.email,
-        password: await bcrypt.hash(req.body.password, 10),
-        verificationToken: crypto.randomBytes(32).toString("hex"),
-        verificationTokenExpiry: Date.now() + 3600000, // ✅ 1 hour from now
-        brandName: req.body.brandName,
-        contact: req.body.contact,
+        name,
+        email,
+        password: hashedPassword,
+        contact,
+        brandName,
+        verificationToken,
+        verificationTokenExpiry: Date.now() + 3600000,
       });
 
       await newSeller.save();
 
       const token = jwt.sign(
-        { id: newSeller._id, type: type },
+        { id: newSeller._id, type },
         process.env.JWT_SECRET,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "1h" }
       );
 
       res.cookie("token", token, {
@@ -42,12 +44,17 @@ exports.SignUp = async (req, res) => {
         sameSite: "Strict",
         maxAge: 3600000,
       });
+      res.cookie("sellerId", newSeller._id, {
+        httpOnly: true,
+        sameSite: "Strict", // Prevent CSRF attacks
+        maxAge: 3600000, // 1 hour
+      });
 
+      // Send email asynchronously before return
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
-      )}/api/auth/verifyEmail/${type}/${newSeller.verificationToken}`;
-
-      const mailRes = await sendEmail({
+      )}/api/auth/verifyEmail/${type}/${verificationToken}`;
+      sendEmail({
         email: newSeller.email,
         subject: "Verify your email address",
         message: `Please verify your email: ${verificationUrl}`,
@@ -56,44 +63,39 @@ exports.SignUp = async (req, res) => {
           name: newSeller.name,
           verificationUrl,
         },
+      }).catch((err) =>
+        console.error("Failed to send seller verification email:", err)
+      );
+
+      return res.status(200).json({
+        token,
+        userId: newSeller._id,
+        message: `A verification email has been sent to ${newSeller.email}. Please verify your account.`,
       });
-
-      if (!mailRes) {
-        return res
-          .status(500)
-          .json({ message: "Failed to send verification email" });
-      } else {
-        return res.status(201).json({
-          message: `A verification email has been sent to ${newSeller.email}. Please verify your account.`,
-        });
-      }
     } else {
-      const { name, email, password, contact } = req.body;
-
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
+      const userExists = await User.findOne({ email });
+      if (userExists) {
         return res.status(400).json({ message: "User already exists" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
+      const verificationToken = crypto.randomBytes(32).toString("hex");
 
       const newUser = new User({
         name,
         email,
         password: hashedPassword,
-        verificationToken: crypto.randomBytes(32).toString("hex"),
-        verificationTokenExpiry: Date.now() + 3600000, // ✅ 1 hour from now
         contact,
+        verificationToken,
+        verificationTokenExpiry: Date.now() + 3600000,
       });
 
       await newUser.save();
 
       const token = jwt.sign(
-        { id: newUser._id, type: type },
+        { id: newUser._id, type },
         process.env.JWT_SECRET,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "1h" }
       );
 
       res.cookie("token", token, {
@@ -102,11 +104,11 @@ exports.SignUp = async (req, res) => {
         maxAge: 3600000,
       });
 
+      // Send email asynchronously before return
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
-      )}/api/auth/verifyEmail/${type}/${newUser.verificationToken}`;
-
-      const mailRes = await sendEmail({
+      )}/api/auth/verifyEmail/${type}/${verificationToken}`;
+      sendEmail({
         email: newUser.email,
         subject: "Verify your email address",
         message: `Please verify your email: ${verificationUrl}`,
@@ -115,33 +117,36 @@ exports.SignUp = async (req, res) => {
           name: newUser.name,
           verificationUrl,
         },
-      });
+      }).catch((err) =>
+        console.error("Failed to send user verification email:", err)
+      );
 
-      if (!mailRes) {
-        return res
-          .status(500)
-          .json({ message: "Failed to send verification email" });
-      } else {
-        return res.status(201).json({
-          message: `A verification email has been sent to ${newUser.email}. Please verify your account.`,
-        });
-      }
+      return res.status(200).json({
+        token,
+        userId: newUser._id,
+        message: `A verification email has been sent to ${newUser.email}. Please verify your account.`,
+      });
     }
   } catch (error) {
     console.error("Error during signup:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 exports.SignIn = async (req, res) => {
   try {
     const { email, password } = req.body;
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).send("Email and password are required");
+    }
     let type = req.params.type.toLowerCase();
 
     if (type == "seller") {
       const seller = await Seller.findOne({
         email: email,
       });
+
       if (!seller) {
         return res.status(400).json({ message: "Invalid email or password" });
       }
@@ -158,6 +163,11 @@ exports.SignIn = async (req, res) => {
         }
       );
       res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "Strict", // Prevent CSRF attacks
+        maxAge: 3600000, // 1 hour
+      });
+      res.cookie("sellerId", seller._id, {
         httpOnly: true,
         sameSite: "Strict", // Prevent CSRF attacks
         maxAge: 3600000, // 1 hour
@@ -426,7 +436,7 @@ exports.verifyToken = async (req, res, next) => {
       if (!seller) {
         return res.status(404).json({ message: "Seller not found" });
       }
-      req.sellerId = seller._id;
+      req.sellerId = id;
       req.isVerified = seller.isVerified;
     } else {
       const user = await User.findById(id);
