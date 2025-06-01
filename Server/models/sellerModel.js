@@ -63,6 +63,5 @@ const sellerSchema = new Schema(
   { timestamps: true }
 );
 
-sellerSchema.index({ email: 1 });
 const sellerModel = model("sellers", sellerSchema);
 module.exports = sellerModel;

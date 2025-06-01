@@ -1,89 +1,87 @@
-import React, { useEffect, useState } from "react";
-import useReview from "../../hooks/useReview";
-import Spinner from "../../components/Spinner";
+import React, { useState, useEffect } from "react";
+import useReviews from "../../hooks/useReview";
 import Rating from "../../components/Rating";
-import { PiSmileySadLight } from "react-icons/pi";
+import Spinner from "../../components/Spinner";
 
-const ProductReviewForm = ({ productId }) => {
-  const { getReviews, isLoading } = useReview();
+const ProductReviewForm = ({ productId, setBool }) => {
+  const { addReview, isLoading } = useReviews();
 
-  const [reviews, setReviews] = useState([]);
-  const [page, setPage] = useState(1);
-  const [perPage] = useState(5); // you can make this dynamic if needed
-  const [totalReviews, setTotalReviews] = useState(0);
+  const [rate, setRate] = useState(0);
 
-  const fetchReviews = async () => {
-    const { data, total } = await getReviews({ productId, page, perPage });
-    setReviews(data || []);
-    setTotalReviews(total || 0);
-  };
+  const [reviewForm, setReviewForm] = useState({
+    heading: "",
+    description: "",
+    stars: rate,
+  });
 
   useEffect(() => {
-    if (productId) {
-      fetchReviews();
-    }
-  }, [productId, page]);
+    setReviewForm((prevData) => ({ ...prevData, stars: rate }));
+  }, [rate]);
 
-  const totalPages = Math.ceil(totalReviews / perPage);
+  const handleReviewSubmit = async () => {
+    const isSuccess = await addReview(productId, reviewForm);
+    if (isSuccess) {
+      setRate(0);
+      setReviewForm((prevData) => ({
+        ...prevData,
+        heading: "",
+        description: "",
+      }));
+      setBool((prev) => !prev); // Toggle to refresh reviews
+      alert("Review submitted successfully!");
+    } else {
+      alert("You have already submitted a review for this product.");
+    }
+  };
 
   return (
-    <div className="my-6 space-y-4">
-      <h3 className="text-xl font-semibold border-b pb-2">Customer Reviews</h3>
-
-      {isLoading ? (
-        <div className="flex justify-center my-6">
-          <Spinner width="w-10" color="#14b8a6" />
+    <form
+      className="w-full gap-2 flex flex-col"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleReviewSubmit();
+      }}
+    >
+      <div className="w-full flex flex-col-reverse md:flex-row gap-2">
+        <input
+          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full md:w-8/12 p-4"
+          value={reviewForm.heading}
+          onChange={(e) =>
+            setReviewForm((prevData) => ({
+              ...prevData,
+              heading: e.target.value,
+            }))
+          }
+          placeholder="Write review heading..."
+        ></input>
+        <div className="flex flex-row gap-2 w-full md:w-4/12">
+          <div className="bg-gray-50 border border-gray-300 rounded-lg flex justify-center items-center w-9/12">
+            <Rating rate={rate} setRate={setRate} size="text-2xl" />
+          </div>
+          <button
+            className="w-3/12 text-base py-2 px-4 flex flex-row justify-center items-center text-white font-medium rounded cursor-pointer uppercase bg-teal-500"
+            type="submit"
+          >
+            <span className="mr-1">
+              {isLoading ? <Spinner width="w-6" color="#ffffff" /> : null}
+            </span>
+            Submit
+          </button>
         </div>
-      ) : !reviews.length ? (
-        <div className="flex flex-col justify-center items-center text-gray-500 text-base my-6">
-          <PiSmileySadLight className="text-4xl mb-1" />
-          <p>No reviews yet. Be the first to share your thoughts!</p>
-        </div>
-      ) : (
-        <>
-          {reviews.map((review) => (
-            <div
-              key={review._id}
-              className="bg-white p-4 rounded-md shadow-sm border"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <Rating rate={review.stars} readOnly size="text-xl" />
-                <span className="text-sm text-gray-400">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <h4 className="text-lg font-medium mb-1">{review.heading}</h4>
-              <p className="text-sm text-gray-700">{review.description}</p>
-            </div>
-          ))}
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2 pt-4">
-              <button
-                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                disabled={page === 1}
-                className="px-3 py-1 border rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-              >
-                Prev
-              </button>
-              <span className="px-2 text-sm text-gray-700">
-                Page {page} of {totalPages}
-              </span>
-              <button
-                onClick={() =>
-                  setPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={page === totalPages}
-                className="px-3 py-1 border rounded text-sm hover:bg-gray-100 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+      </div>
+      <textarea
+        rows="6"
+        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-4"
+        placeholder="Write your review description here..."
+        value={reviewForm.description}
+        onChange={(e) =>
+          setReviewForm((prevData) => ({
+            ...prevData,
+            description: e.target.value,
+          }))
+        }
+      ></textarea>
+    </form>
   );
 };
 

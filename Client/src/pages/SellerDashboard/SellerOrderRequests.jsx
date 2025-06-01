@@ -22,117 +22,214 @@ function SellerOrderRequests() {
   }, []);
 
   return (
-    <>
-      <h2 className="text-5xl ml-96 mt-2   font-semibold text-gray-700 mb-6">
-        All Orders
-      </h2>
+    <div className="min-h-screen bg-gray-50/50">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
+            All Orders
+          </h2>
+          <p className="text-gray-600">Manage and track your incoming orders</p>
+        </div>
 
-      {/* Search (disabled for now) */}
-      <div className="flex justify-end px-4 mb-6">
-        <input
-          type="text"
-          className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 disabled:cursor-not-allowed"
-          placeholder="Search for products (Coming soon)"
-          disabled
-        />
-      </div>
-
-      {/* Table container with horizontal scroll on small devices */}
-      <div className="overflow-x-auto">
-        {isLoading ? (
-          <TableSkeleton />
-        ) : data.length === 0 ? (
-          <EmptyStatetext text="Your order request queue is currently empty. Keep an eye out for incoming orders!" />
-        ) : (
-          <table className="min-w-full text-center text-sm font-light border-collapse">
-            <thead className="bg-gray-100 border-b font-medium text-gray-700">
-              <tr>
-                <th className="px-6 py-3 whitespace-nowrap">#</th>
-                <th className="px-6 py-3 whitespace-nowrap">Image</th>
-                <th className="px-6 py-3 whitespace-nowrap">Category</th>
-                <th className="px-6 py-3 whitespace-nowrap">Product Name</th>
-                <th className="px-6 py-3 whitespace-nowrap">Order Date</th>
-                <th className="px-6 py-3 whitespace-nowrap">Customer Name</th>
-                <th className="px-6 py-3 whitespace-nowrap">Phone No</th>
-                <th className="px-6 py-3 whitespace-nowrap">Email</th>
-                <th className="px-6 py-3 whitespace-nowrap">Quantity</th>
-                <th className="px-6 py-3 whitespace-nowrap">Location</th>
-                <th className="px-6 py-3 whitespace-nowrap">Total Price</th>
-                <th className="px-6 py-3 whitespace-nowrap">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b hover:bg-neutral-100 transition-colors duration-200"
+        {/* Search Section */}
+        <div className="mb-6">
+          <div className="flex justify-end">
+            <div className="relative w-full max-w-sm">
+              <input
+                type="text"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:bg-gray-50 shadow-sm transition-all duration-200"
+                placeholder="Search for products (Coming soon)"
+                disabled
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <td className="px-6 py-4 font-medium">{idx + 1}</td>
-                  <td className="px-6 py-2">
-                    <img
-                      src={item.productId.image}
-                      alt={item.productId.name}
-                      loading="lazy"
-                      className="w-12 h-12 object-cover rounded-md mx-auto"
-                    />
-                  </td>
-                  <td className="px-6 py-4">{item.productId.category}</td>
-                  <td
-                    className="px-6 py-4 max-w-[150px] truncate"
-                    title={item.productId.name}
-                  >
-                    {item.productId.name}
-                  </td>
-                  <td className="px-6 py-4">{item.orderDate}</td>
-                  <td
-                    className="px-6 py-4 max-w-[140px] truncate"
-                    title={item.userId.name}
-                  >
-                    {item.userId.name}
-                  </td>
-                  <td
-                    className="px-6 py-4 max-w-[130px] truncate"
-                    title={item.userId.contact}
-                  >
-                    {item.userId.contact}
-                  </td>
-                  <td
-                    className="px-6 py-4 max-w-[180px] truncate"
-                    title={item.userId.email}
-                  >
-                    {item.userId.email}
-                  </td>
-                  <td className="px-6 py-4">
-                    {item.orderQty} {item.productId.measuringUnit}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      className="text-sky-600 font-medium hover:underline"
-                      onClick={() =>
-                        navigate(
-                          `/map/${item.orderLocation.coordinates[1]}/${item.orderLocation.coordinates[0]}`
-                        )
-                      }
-                      title="View location on map"
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Container */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            {isLoading ? (
+              <div className="p-6">
+                <TableSkeleton />
+              </div>
+            ) : data.length === 0 ? (
+              <div className="p-12">
+                <EmptyStatetext text="Your order request queue is currently empty. Keep an eye out for incoming orders!" />
+              </div>
+            ) : (
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      #
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Product Name
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Order Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Customer
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Quantity
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Total Price
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {data.map((item, idx) => (
+                    <tr
+                      key={idx}
+                      className="hover:bg-gray-50 transition-colors duration-150"
                     >
-                      {item.orderLocation.coordinates[1].toFixed(4)},{" "}
-                      {item.orderLocation.coordinates[0].toFixed(4)}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4">Rs. {item.totalAmount}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-yellow-700 bg-yellow-100 font-semibold">
-                      <GoDotFill className="mr-1" />
-                      Pending
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {idx + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex-shrink-0 h-12 w-12">
+                          <img
+                            src={item.productId.image || "/placeholder.svg"}
+                            alt={item.productId.name}
+                            loading="lazy"
+                            className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {item.productId.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className="text-sm font-medium text-gray-900 max-w-[150px] truncate"
+                          title={item.productId.name}
+                        >
+                          {item.productId.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {item.orderDate}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className="text-sm font-medium text-gray-900 max-w-[140px] truncate"
+                          title={item.userId.name}
+                        >
+                          {item.userId.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className="text-sm text-gray-600 max-w-[180px] truncate"
+                          title={item.userId.email}
+                        >
+                          {item.userId.email}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span className="font-medium">{item.orderQty}</span>
+                        <span className="text-gray-500 ml-1">
+                          {item.productId.measuringUnit}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150"
+                          onClick={() =>
+                            navigate(
+                              `/map/${item.orderLocation.coordinates[1]}/${item.orderLocation.coordinates[0]}`
+                            )
+                          }
+                          title="View location on map"
+                        >
+                          <svg
+                            className="w-3 h-3 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          View Map
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                        ₹{item.totalAmount.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <GoDotFill className="w-2 h-2 mr-1.5" />
+                          Pending
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {/* Footer info */}
+        {!isLoading && data.length > 0 && (
+          <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+            <div>
+              Showing {data.length} order{data.length !== 1 ? "s" : ""}
+            </div>
+            <div className="text-xs text-gray-500">
+              Last updated: {new Date().toLocaleTimeString()}
+            </div>
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

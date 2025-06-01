@@ -17,11 +17,11 @@ function OrderCartCard({ item }) {
             {item.name}
           </h3>
           <div className="flex justify-start items-start flex-col space-y-2">
-            <p className="text-sm  leading-none text-gray-800">
-              <span className=" text-gray-300">Brand: </span> {item.brand}
+            <p className="text-sm  leading-none text-black">
+              <span className=" text-black">Brand: </span> {item.brandName}
             </p>
             <p className="text-sm  leading-none text-gray-800">
-              <span className=" text-gray-300">Minimum Order Quantity: </span>{" "}
+              <span className=" text-black">Minimum Order Quantity: </span>{" "}
               {item.minQty}
               {item.unit}
             </p>

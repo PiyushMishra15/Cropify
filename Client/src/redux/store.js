@@ -5,7 +5,7 @@ import userLocationReducer from "./slices/locationSlice";
 const store = configureStore({
   reducer: {
     cart: cartReducer,
-    userLocationReducer: userLocationReducer,
+    userLocation: userLocationReducer,
   },
 });
 

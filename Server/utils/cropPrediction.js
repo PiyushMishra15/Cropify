@@ -25,7 +25,7 @@ For each crop, use the following format:
 Crop: <Crop Name>
 Reason: <Reason why it is suitable under these conditions>
 
-Present each crop in a new section.`;
+Present each crop in a new section.  only provide the crop names and reasons, without any additional text or explanations in short where crop name  numbered beatuify the format as presentaable size .`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

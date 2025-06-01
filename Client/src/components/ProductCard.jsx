@@ -7,7 +7,7 @@ export default function ProductCard({ data, addOverlay = false }) {
   const navigate = useNavigate();
 
   const goToDetailsPage = () => {
-    navigate(`details/${data._id}`, { state: { product: data } });
+    navigate(`details/${data._id}`, { product: data });
   };
 
   return (
@@ -51,7 +51,7 @@ export default function ProductCard({ data, addOverlay = false }) {
 
               <div className="flex items-center text-xs text-gray-500 mb-2">
                 <Tag className="w-3.5 h-3.5 mr-1" />
-                {data.brand}
+                {data.brandName}
               </div>
             </div>
 

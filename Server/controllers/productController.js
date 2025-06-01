@@ -92,7 +92,9 @@ exports.getProductDataByCategory = async (req, res) => {
 exports.getProductDashboardData = async (req, res) => {
   try {
     let data = await Product.findById(req.params.productId)
-      .select("shelfLife quantity description")
+      .select(
+        "shelfLife quantity description date sellerId image name brand measuringUnit pricePerUnit minimumOrderQuantity location  deliveryRadius"
+      )
       .lean();
     res.status(200).send(data);
   } catch (error) {

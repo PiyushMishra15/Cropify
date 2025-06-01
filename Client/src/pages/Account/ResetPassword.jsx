@@ -1,30 +1,34 @@
 import React, { useState } from "react";
 import { Sprout, Lock, Eye, EyeOff } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
 import FormInput from "../../components/FormInput";
 
 import useEmailAuth from "../../hooks/sendEmailAuth";
 
 const ResetPassword = () => {
-  const [searchParams] = useSearchParams();
+  const { type, token } = useParams();
   const navigate = useNavigate();
-  const token = searchParams.get("token");
-  const type = searchParams.get("type") || "user"; // Default to 'user' if not provided
 
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  const { isLoading, resetPassword } = useEmailAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(""); // Clear error on input change
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -37,16 +41,18 @@ const ResetPassword = () => {
     }
 
     setError("");
-    setIsLoading(true);
-
-    useEmailAuth
-      .resetPassword(type, token, formData.password)
-      .then((response) => {
+    try {
+      const response = await resetPassword(type, token, formData.password);
+      if (response.success) {
         setSuccess(true);
-      })
-      .catch((error) => {
-        setError(error?.response?.data?.message || "Failed to reset password");
-      });
+        // Redirect after some delay, e.g. 3 seconds
+        navigate("/login");
+      } else {
+        setError(response.message || "Failed to reset password");
+      }
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to reset password");
+    }
   };
 
   if (!token) {
@@ -156,17 +162,17 @@ const ResetPassword = () => {
                 >
                   {isLoading ? (
                     <svg
-                      className="animate-spin h-5 w-5 text-white\"
-                      xmlns="http://www.w3.org/2000/svg\"
-                      fill="none\"
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        className="opacity-25\"
-                        cx="12\"
-                        cy="12\"
-                        r="10\"
-                        stroke="currentColor\"
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
                         strokeWidth="4"
                       ></circle>
                       <path

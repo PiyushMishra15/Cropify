@@ -64,6 +64,10 @@ const LoginForm = () => {
 
   return (
     <>
+      <h2 class="text-lg font-semibold text-red-500 mb-2">
+        Use a placeholder email Pass for demo check !!
+      </h2>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormInput
           label="Email Address"

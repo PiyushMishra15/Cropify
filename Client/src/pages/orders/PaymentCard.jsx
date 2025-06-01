@@ -2,6 +2,7 @@ import React from "react";
 import useOrder from "../../hooks/useOrder";
 import { useSelector } from "react-redux";
 import Spinner from "../../components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const PaymentCard = ({
   totalAmount,
@@ -13,6 +14,7 @@ const PaymentCard = ({
   const cartData = useSelector((state) => state.cart.items);
 
   const { addOrder, isLoading: isPaymentInitiated } = useOrder();
+  const navigate = useNavigate();
 
   const orderNow = async () => {
     if (customerLatitude === null || customerLongitude === null) {
@@ -36,6 +38,7 @@ const PaymentCard = ({
 
     addOrder(orderData);
     alert("Order placed successfully", "success");
+    navigate("/");
   };
 
   return (

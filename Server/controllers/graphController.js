@@ -13,14 +13,17 @@ const getGraphData = async (req, res) => {
         select: "category pricePerUnit",
       })
       .lean();
-    const dateVsSales = getDateVsSalesData(orders);
-    const categoryVsSales = getCategoryVsSalesData(orders);
-    res
-      .status(200)
-      .send({ dateVsSales: dateVsSales, categoryVsSales: categoryVsSales });
+
+    const dateVsSales = getDateVsSalesData(orders) || [];
+    const categoryVsSales = getCategoryVsSalesData(orders) || [];
+
+    res.status(200).send({
+      dateVsSales: Array.isArray(dateVsSales) ? dateVsSales : [],
+      categoryVsSales: Array.isArray(categoryVsSales) ? categoryVsSales : [],
+    });
   } catch (error) {
+    console.error("getGraphData error:", error);
     res.status(500).send("Something went wrong!");
-    console.log(error);
   }
 };
 

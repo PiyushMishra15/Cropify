@@ -18,6 +18,8 @@ function SellerOverview() {
     let graphData = await fetchGraphData();
     setDateVsSales(graphData.dateVsSales);
     setCategoryVsSales(graphData.categoryVsSales);
+    console.log("DDDDDDDD", graphData.dateVsSales);
+    console.log("CCCCCCCC", graphData.categoryVsSales);
     setIsLoading(false);
   };
 

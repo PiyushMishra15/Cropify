@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, User, Menu, X, LogOut } from "lucide-react";
@@ -16,8 +15,6 @@ const Navbar = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    // Check for token on mount
     setIsLoggedIn(!!localStorage.getItem("token"));
 
     return () => {
@@ -31,20 +28,44 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    useEmailAuth.handleLogout?.(); // optional chaining to avoid errors if not defined
+    useEmailAuth.handleLogout?.();
     setIsLoggedIn(false);
     navigate("/login");
   };
 
   return (
     <header
-      className={`fixed  top-0 bg-white/90 left-0 right-0 z-50 h-16 transition-all duration-300 ${
+      className={`fixed top-0 bg-white/90 left-0 right-0 z-50 h-16 transition-all duration-300 ${
         isScrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
       }`}
     >
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between h-full">
-        {/* Logo */}
-        <div className="flex items-center h-full">
+        {/* Logo + Go Back */}
+        <div className="flex items-center space-x-4 h-full">
+          {/* Go Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="hidden md:flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100 h-10"
+            aria-label="Go Back"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span className="text-sm font-medium">Back</span>
+          </button>
+
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-green-700">
               Cropify
@@ -55,10 +76,10 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8 h-full">
           <Link
-            to="/shop"
+            to="/"
             className="text-gray-700 hover:text-green-600 transition-colors flex items-center h-full"
           >
-            Shop
+            Home
           </Link>
           <Link
             to="/about"
@@ -109,7 +130,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Toggle */}
         <div className="md:hidden">
           <button
             onClick={toggleMobileMenu}
@@ -130,27 +151,53 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto px-4 py-4 space-y-4">
+          <button
+            onClick={() => {
+              navigate(-1);
+              setIsMobileMenuOpen(false);
+            }}
+            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+            aria-label="Go Back"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span className="text-sm font-medium">Back</span>
+          </button>
+
           <Link
             to="/shop"
-            className="block py-2 text-gray-700 hover:text-green-600 transition-colors"
+            className="block py-2 text-gray-700 hover:text-green-600"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Shop
           </Link>
           <Link
             to="/about"
-            className="block py-2 text-gray-700 hover:text-green-600 transition-colors"
+            className="block py-2 text-gray-700 hover:text-green-600"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             About
           </Link>
           <Link
             to="/contact"
-            className="block py-2 text-gray-700 hover:text-green-600 transition-colors"
+            className="block py-2 text-gray-700 hover:text-green-600"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Contact
           </Link>
+
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             {isLoggedIn ? (
               <button
@@ -159,7 +206,6 @@ const Navbar = () => {
                   setIsMobileMenuOpen(false);
                 }}
                 className="flex items-center space-x-2 text-gray-700 hover:text-red-600 transition-colors"
-                aria-label="Logout"
               >
                 <LogOut size={20} />
                 <span className="text-sm font-medium">Logout</span>
@@ -171,7 +217,6 @@ const Navbar = () => {
                   setIsMobileMenuOpen(false);
                 }}
                 className="flex items-center space-x-2 text-gray-700 hover:text-green-600 transition-colors"
-                aria-label="Login"
               >
                 <User size={20} />
                 <span className="text-sm font-medium">Login</span>
@@ -184,7 +229,6 @@ const Navbar = () => {
                 setIsMobileMenuOpen(false);
               }}
               className="flex items-center space-x-2 bg-green-500 text-white px-3 py-2 rounded-full hover:bg-green-600 transition-colors"
-              aria-label="Cart"
             >
               <ShoppingCart size={20} />
               <span className="text-sm font-medium">Cart (0)</span>

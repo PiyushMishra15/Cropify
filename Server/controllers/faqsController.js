@@ -1,24 +1,39 @@
 const FAQ = require("../models/faqsSchema");
 
+const Product = require("../models/productSchema"); // Make sure to import your Product model
+
 const addFAQ = async (req, res) => {
   try {
-    req.body.userId = req.userId;
-    req.body.productId = req.params.productId;
+    console.log("User ID:", req.userId);
+    const { productId } = req.params;
 
-    let data = FAQ(req.body);
-    let result = await data.save();
-    console.log(result);
+    // Fetch the product to get the sellerId
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).send({ message: "Product not found." });
+    }
+
+    // Add required fields
+    req.body.userId = req.userId;
+    req.body.productId = productId;
+    req.body.sellerId = product.sellerId; // ✅ this was missing
+
+    // Save FAQ
+    const data = new FAQ(req.body);
+    const result = await data.save();
+
+    console.log("Saved FAQ:", result);
+
     res.status(200).send({
       message:
         "After the seller answers your question, we will send you an email to inform you.",
     });
   } catch (error) {
-    console.log(error);
+    console.log("FAQ Error:", error);
     if (
       error.code === 11000 &&
-      error.keyPattern &&
-      error.keyPattern.userId &&
-      error.keyPattern.productId
+      error.keyPattern?.userId &&
+      error.keyPattern?.productId
     ) {
       res.status(400).send({
         message: "You have already submitted a question for this product.",

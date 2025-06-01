@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Spinner from "../../components/Spinner";
 import LeafletMap from "../../components/map/LeafletMap";
-import useFaq from "../../hooks/faqs/useFaq";
+import useFAQs from "../../hooks/useFaq";
 
 function SellerContact({ productData }) {
-  const { addFaq, isLoading } = useFaq();
+  const { addFAQ, isLoading } = useFAQs();
 
   const position = [
     productData?.location?.coordinates[1],
@@ -18,9 +18,14 @@ function SellerContact({ productData }) {
   const submitFeedbackForm = async () => {
     if (!productData?._id) return;
 
-    const isSuccess = await addFaq(productData._id, feedbackForm.question);
+    const response = await addFAQ(productData._id, feedbackForm.question);
+    console.log(response);
 
-    if (isSuccess) {
+    if (response) {
+      alert(response.data.message || "Message sent successfully!");
+      setFeedbackForm((prev) => ({ ...prev, question: "" }));
+    } else {
+      alert(response.data.message || "Already  Sent!");
       setFeedbackForm((prev) => ({ ...prev, question: "" }));
     }
   };

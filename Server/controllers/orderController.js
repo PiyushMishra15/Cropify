@@ -34,7 +34,8 @@ exports.showOrdersBySeller = async (req, res) => {
     let data = await Order.find({ sellerId: req.sellerId })
       .populate({
         path: "productId",
-        select: "image category name measuringUnit pricePerUnit",
+        select:
+          "image category name measuringUnit pricePerUnit  minimumOrderQuantity location   deliveryRadius",
       })
       .populate({ path: "userId", select: "name email contact" })
       .lean();

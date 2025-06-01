@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import CustomerLocationSelector from "./CustomerLocationSelector";
 import OrderSummary from "./OrderSummary";
 import PaymentCard from "./PaymentCard";
+import Navbar from "../../components/NavBar.jsx";
 
 function Order() {
   function getCurrentDateTime() {
@@ -33,6 +34,7 @@ function Order() {
   const [customerLongitude, setCustomerLongitude] = useState(null);
 
   const { latitude, longitude } = useSelector((state) => state.userLocation);
+  console.log("Latitude:", latitude, "Longitude:", longitude);
 
   useEffect(() => {
     let amount = 0;
@@ -49,7 +51,8 @@ function Order() {
 
   return (
     <>
-      <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
+      <Navbar />
+      <div className="py-14 pt-16 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
         <div className="flex justify-start item-start space-y-1 md:space-y-2 flex-col">
           <h1 className="text-2xl md:text-3xl font-semibold leading-6 text-gray-800">
             Your Order{" "}

@@ -94,8 +94,9 @@ const useEmailAuth = () => {
         }
       );
       alert(response.data.message);
+      return response;
     } catch (error) {
-      alert(error?.response?.data?.message || "Failed to reset password");
+      return error;
     } finally {
       setIsLoading(false);
     }

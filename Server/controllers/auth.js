@@ -378,6 +378,7 @@ exports.ResetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
     // Find user by reset token
+
     let type = req.params.type.toLowerCase();
     if (type === "seller") {
       const seller = await Seller.findOne({

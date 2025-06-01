@@ -17,8 +17,15 @@ const useFAQs = () => {
           withCredentials: true,
         }
       );
-      return response.data;
+      return response;
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return {
+          data: {
+            message: "You have already submitted a question for this product.",
+          },
+        };
+      }
       console.error("Error adding FAQ:", error);
       throw error;
     } finally {
