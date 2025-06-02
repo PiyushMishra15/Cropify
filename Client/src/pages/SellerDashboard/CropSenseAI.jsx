@@ -7,7 +7,7 @@ import {
   Mountain,
   Sprout,
 } from "lucide-react";
-import Spinner from "../../components/spinner";
+import Spinner from "../../components/Spinner";
 import predictCrops from "../../hooks/useAi";
 
 const CropSenseAi = () => {
@@ -25,10 +25,9 @@ const CropSenseAi = () => {
     setIsLoading(true);
     try {
       const res = await predictCrops(formData);
-      console.log("Prediction response:", res.message);
+
       setPrediction(res.message);
     } catch (error) {
-      console.error("Prediction error:", error);
       setPrediction(
         "An error occurred while predicting crops. Please try again."
       );

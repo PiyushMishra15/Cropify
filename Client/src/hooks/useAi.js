@@ -16,7 +16,6 @@ const predictCrops = async (queryParams) => {
 
     return response.data; // Contains prediction results
   } catch (error) {
-    console.error("Error predicting crops:", error);
     throw error;
   }
 };

@@ -1,12 +1,13 @@
 import React from "react";
 import axios from "axios";
+import { toast, Bounce } from "react-toastify";
 
 const BASE_URL = "http://localhost:3000/api";
 
 const useReviews = () => {
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const getReviews = async (productId, page = 1, review_per_page = 2) => {
+  const getReviews = async (productId, page = 1, review_per_page = 5) => {
     try {
       setIsLoading(true);
       const response = await axios.get(
@@ -22,12 +23,33 @@ const useReviews = () => {
 
   const addReview = async (productId, reviewData) => {
     if (reviewData.heading === "" || reviewData.description === "") {
-      alert("Please fill the review form correctly!", "info");
+      toast.info("Please fill the review form correctly!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return false;
     }
 
     if (reviewData.stars === 0) {
-      alert("Please select the stars of the product", "info");
+      toast.info("Please select the stars of the product", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
       return false;
     }
 
@@ -38,7 +60,6 @@ const useReviews = () => {
       });
       return true;
     } catch (error) {
-      console.error("Error adding review:", error);
       return false;
     } finally {
       setIsLoading(false);

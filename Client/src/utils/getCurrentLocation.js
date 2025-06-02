@@ -1,9 +1,20 @@
 //import { notify } from './notification';
-
+import { toast, Bounce } from "react-toastify";
 export const getCurrentLocation = async () => {
   if (!navigator.geolocation) {
     console.error("Geolocation is not supported by this browser.");
-    alert("Geolocation is not supported by this browser.", "error");
+
+    toast.error("Geolocation is not supported by this browser.", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
     throw new Error("Geolocation is not supported");
   }
 
@@ -17,11 +28,20 @@ export const getCurrentLocation = async () => {
         resolve([longitude, latitude]); // lng, lat
       },
       (error) => {
-        console.error(`Error Code: ${error.code} - ${error.message}`);
-        alert(
-          "Unable to retrieve your location. Please allow location access."
+        toast.error(
+          "Unable to retrieve your location. Please allow location access.",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          }
         );
-        alert("Setting (20.59,78.96) as default location.");
         reject(new Error(`Geolocation error: ${error.message}`)); // Fixed: removed array
       }
     );

@@ -21,6 +21,7 @@ function setupWebSocket(io) {
 
     socket.on("disconnect", () => {
       console.log("User disconnected");
+      changeStream.close();
     });
   });
 }

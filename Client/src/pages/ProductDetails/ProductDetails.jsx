@@ -14,7 +14,7 @@ import Navbar from "../../components/NavBar";
 import ProductReviews from "./ProductReviews";
 import FAQ from "./FAQ";
 import SellerContact from "./SellerContact";
-
+import { toast, Bounce } from "react-toastify";
 // Import your cart actions
 import { addToCart, removeFromCart } from "../../redux/slices/cartSlice";
 
@@ -89,13 +89,35 @@ function ProductDetails() {
     };
 
     dispatch(addToCart(newItem));
-    alert("Product added to cart successfully!");
+
+    toast.success("Product added to cart successfully!", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   const removeProductFromCart = () => {
     if (!productDashboardData) return;
     dispatch(removeFromCart(productDashboardData._id));
-    alert("Product removed from cart successfully!");
+
+    toast.error("Product removed from cart successfully!", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   return (

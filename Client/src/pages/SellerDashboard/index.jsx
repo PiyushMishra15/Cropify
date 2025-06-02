@@ -47,8 +47,6 @@ const links = [
 ];
 
 const NewSellerDashboard = () => {
-  const navigate = useNavigate();
-  const brandName = localStorage.getItem("brandName");
   const { handleLogout } = SendEmailAuth();
 
   return (

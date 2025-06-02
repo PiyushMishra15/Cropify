@@ -3,6 +3,7 @@ import CartCard from "../../components/CartCard";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/NavBar.jsx";
+import { toast, Bounce } from "react-toastify";
 
 function Cart() {
   const navigate = useNavigate();
@@ -19,7 +20,18 @@ function Cart() {
 
   const handleCheckout = () => {
     if (cartData.length === 0) {
-      alert("Please add some products to cart first");
+      bottom -
+        right("Your cart is empty. Please add products to proceed.", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+
       return;
     }
     navigate("/orders");

@@ -5,6 +5,7 @@ import LeafletMap from "../../components/map/LeafletMap";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import InputTag from "../../components/InputTag";
 import useProduct from "../../hooks/useProduct";
+import { toast, Bounce } from "react-toastify";
 
 function SellerProduct() {
   const navigate = useNavigate();
@@ -81,9 +82,33 @@ function SellerProduct() {
   }, [lat, long]);
 
   const handleSubmit = async () => {
-    if (!formData.image) return alert("Please upload product image");
+    if (!formData.image) {
+      return toast.info("Please upload an image", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: "bounce",
+      });
+    }
     const [lng, latCoord] = formData.location.coordinates;
-    if (!latCoord || !lng) return alert("Please select location");
+    if (!latCoord || !lng) {
+      return toast.info("Please Select a location ", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: "bounce",
+      });
+    }
 
     setIsLoading(true);
 

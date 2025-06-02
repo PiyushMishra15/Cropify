@@ -51,12 +51,9 @@ const LoginForm = () => {
 
       handleSignin({ email, password }, type)
         .then((response) => {
-          console.log("Login successful:", response);
-
           setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Login failed:", error);
           setIsLoading(false);
         });
     }
@@ -64,7 +61,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <h2 class="text-lg font-semibold text-red-500 mb-2">
+      <h2 className="text-lg font-semibold text-red-500 mb-2">
         Use a placeholder email Pass for demo check !!
       </h2>
 

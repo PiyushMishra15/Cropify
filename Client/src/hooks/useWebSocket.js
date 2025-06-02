@@ -8,14 +8,15 @@ const useStockUpdateSocket = (onStockUpdate) => {
     });
 
     socket.on("stockUpdate", (data) => {
-      // Pass the update to the callback
       onStockUpdate(data.productId, data.quantity);
     });
+
+    // Optional: handle connection errors, reconnect, etc.
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [onStockUpdate]); // Add onStockUpdate to dependencies
 };
 
 export default useStockUpdateSocket;

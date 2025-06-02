@@ -54,7 +54,6 @@ const EmptyStateText = ({ text }) => (
 
 function ProductReviews({ productId }) {
   const { getReviews, isLoading } = useReview();
-  console.log("ProductReviewForm rendered for productId:", productId);
 
   const [reviewData, setReviewData] = useState([]);
   const [reachedEnd, setReachedEnd] = useState(false);
@@ -66,14 +65,20 @@ function ProductReviews({ productId }) {
   useEffect(() => {
     const getReview = async () => {
       if (!productId) return;
-      if (currentPage === 1) {
-        return;
-      }
+
       const data = await getReviews(productId, currentPage, 5);
       if (data.length === 0) {
         setReachedEnd(true);
       }
-      setReviewData((prev) => [...prev, ...data]);
+
+      setReviewData((prev) => {
+        const newData = [...prev, ...data];
+        // Remove duplicates by _id
+        const uniqueData = Array.from(
+          new Map(newData.map((item) => [item._id, item])).values()
+        );
+        return uniqueData;
+      });
       setIsReviewFirstTimeLoading(false);
     };
 
@@ -118,7 +123,7 @@ function ProductReviews({ productId }) {
               {/* Reviews List */}
               {reviewData.map((item, index) => (
                 <div
-                  key={index}
+                  key={item._id || index}
                   className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-gray-200"
                 >
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">

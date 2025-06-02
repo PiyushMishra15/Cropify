@@ -143,7 +143,7 @@ function Product() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.05, 0.5) }}
               >
-                <ProductCard data={data} addOverlay={false} />
+                <ProductCard data={data} addOverlay={true} />
               </motion.div>
             ))}
 

@@ -1,6 +1,7 @@
 // src/hooks/useProducts.js
 
 import axios from "axios";
+import { toast, Bounce } from "react-toastify";
 
 const BASE_URL = "http://localhost:3000/api"; // Replace with your backend URL
 
@@ -19,7 +20,6 @@ const useProducts = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching products by category:", error);
       return null;
     }
   };
@@ -32,7 +32,6 @@ const useProducts = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching user dashboard data:", error);
       return null;
     }
   };
@@ -44,7 +43,6 @@ const useProducts = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching seller products:", error);
       return null;
     }
   };
@@ -57,10 +55,20 @@ const useProducts = () => {
         },
         withCredentials: true,
       });
-      alert("Product updated successfully");
+
+      toast.success("Product Updated Successully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return true;
     } catch (error) {
-      console.error("Error updating product:", error);
       return false;
     }
   };
@@ -73,10 +81,20 @@ const useProducts = () => {
         },
         withCredentials: true,
       });
-      alert("Product added successfully");
+
+      toast.success("Product added Successully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return true;
     } catch (error) {
-      console.error("Error adding product:", error);
       return false;
     }
   };
@@ -88,7 +106,6 @@ const useProducts = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching product by ID:", error);
       return null;
     }
   };
@@ -98,10 +115,20 @@ const useProducts = () => {
       await axios.delete(`${BASE_URL}/product/delete/${productId}`, {
         withCredentials: true,
       });
-      alert("Product deleted successfully");
+
+      toast.success("Product deleted Successully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return true;
     } catch (error) {
-      console.error("Error deleting product:", error);
       return false;
     }
   };
@@ -114,7 +141,6 @@ const useProducts = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching main product dashboard data:", error);
       return null;
     }
   };
@@ -126,7 +152,6 @@ const useProducts = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching seller dashboard products:", error);
       return null;
     }
   };
@@ -139,7 +164,6 @@ const useProducts = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching product stock by ID:", error);
       return null;
     }
   };

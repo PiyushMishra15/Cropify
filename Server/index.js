@@ -10,16 +10,27 @@ const orderRoutes = require("./routes/order");
 const faqRoutes = require("./routes/faqs");
 const graphRoutes = require("./routes/graph");
 const aiRoutes = require("./routes/ai");
+const http = require("http");
+const { setupWebSocket } = require("./config/webSocketConfig");
+const { Server } = require("socket.io");
 
 require("dotenv").config();
 
 const app = express();
 const port = 3000;
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // Change to your frontend domain in prod
+  },
+});
+
+setupWebSocket(io); // ← Your function is used here
 
 // ✅ Middleware first
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true, // Allow all origins
     credentials: true,
   })
 );
@@ -47,6 +58,6 @@ app.get("/", (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

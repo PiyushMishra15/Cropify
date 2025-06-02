@@ -39,35 +39,42 @@ exports.addProduct = async (req, res) => {
 //get all products by  category  /products/category/fruits/77.1025/28.7041?page=1&products_per_page=10
 exports.getProductDataByCategory = async (req, res) => {
   try {
-    let page = req.query.page;
-    let products_per_page = req.query.products_per_page;
+    // Parse query parameters safely
+    const page = parseInt(req.query.page) || 1;
+    const productsPerPage = parseInt(req.query.products_per_page) || 10;
+    const lng = parseFloat(req.query.lng);
+    const lat = parseFloat(req.query.lat);
+    const category = req.params.category;
 
-    let skip = (page - 1) * products_per_page;
+    // Validate required coordinates
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({ message: "Invalid coordinates" });
+    }
 
-    const totalProduct = await Product.countDocuments({
-      category: req.params.category,
-    });
+    const skip = (page - 1) * productsPerPage;
 
-    const hasMore = totalProduct > page * products_per_page ? true : false;
+    // Count total products in category
+    const totalProduct = await Product.countDocuments({ category });
 
-    let products =
-      (await Product.find({ category: req.params.category })
-        .sort({ date: -1 })
-        .skip(skip)
-        .limit(products_per_page)
-        .select(
-          "name image brand measuringUnit pricePerUnit minimumOrderQuantity location sellerId deliveryRadius"
-        )
-        .lean()) || [];
-    let nonDeliverableProducts = [];
-    let deliverableProducts = [];
+    // Check for more pages
+    const hasMore = totalProduct > page * productsPerPage;
 
-    products.map((product) => {
-      let userCoordinates = [
-        parseFloat(req.params.lng),
-        parseFloat(req.params.lat),
-      ];
+    // Fetch products
+    const products = await Product.find({ category })
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(productsPerPage)
+      .select(
+        "name image brand measuringUnit pricePerUnit minimumOrderQuantity location sellerId deliveryRadius"
+      )
+      .lean();
 
+    const deliverableProducts = [];
+    const nonDeliverableProducts = [];
+
+    const userCoordinates = [lng, lat];
+
+    products.forEach((product) => {
       const distance = calculateDistance(
         userCoordinates,
         product.location.coordinates
@@ -80,12 +87,14 @@ exports.getProductDataByCategory = async (req, res) => {
       }
     });
 
-    res
-      .status(200)
-      .send({ deliverableProducts, nonDeliverableProducts, hasMore });
+    return res.status(200).json({
+      deliverableProducts,
+      nonDeliverableProducts,
+      hasMore,
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Something went wrong!" });
+    console.error("Error fetching products by category:", error);
+    return res.status(500).json({ message: "Something went wrong!" });
   }
 };
 

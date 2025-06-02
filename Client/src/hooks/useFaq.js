@@ -26,7 +26,7 @@ const useFAQs = () => {
           },
         };
       }
-      console.error("Error adding FAQ:", error);
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -46,7 +46,6 @@ const useFAQs = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error answering FAQ:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -62,7 +61,6 @@ const useFAQs = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching FAQs:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -81,7 +79,6 @@ const useFAQs = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching seller FAQs:", error);
       throw error;
     } finally {
       setIsLoading(false);

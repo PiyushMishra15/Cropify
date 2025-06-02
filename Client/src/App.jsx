@@ -17,6 +17,8 @@ import ProductDashboard from "./pages/ProductDetails/ProductDetails";
 import Footer from "./components/Footer";
 import ResetPassword from "./pages/Account/ResetPassword";
 import Order from "./pages/orders";
+import { ToastContainer, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Cart from "./pages/cart";
 
@@ -147,6 +149,19 @@ export default function App() {
           ></Route>
         </Routes>
       </Router>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <Footer />
     </>
   );

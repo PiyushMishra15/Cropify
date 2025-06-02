@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, Bounce } from "react-toastify";
 
 const useEmailAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,13 +23,35 @@ const useEmailAuth = () => {
         `${baseURL}/auth/signup/${type}`,
         formData
       );
-      alert(response.data.message);
+
+      toast.success(response.data.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       localStorage.setItem("token", response.data.token);
       let id = response.data.userId;
       navigate(`/verifyEmail/${type}/${id}`); // Redirect to verification page
     } catch (error) {
       console.error("Signup error:", error);
-      alert(error?.response?.data?.message || "Signup failed");
+
+      toast.error(error?.response?.data?.message || "Signup failed", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +69,18 @@ const useEmailAuth = () => {
         localStorage.setItem("brandName", response.data.brandName);
       }
       localStorage.setItem("token", response.data.token);
-      alert("Signed in successfully!");
+      toast.success("Singnin successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
       if (type === "seller") {
         navigate("/sellerDashboard");
       } // }
@@ -54,7 +88,17 @@ const useEmailAuth = () => {
         navigate("/");
       }
     } catch (error) {
-      alert(error?.response?.data?.message || "Signin failed");
+      toast.error(error?.response?.data?.message || "Signin failed", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +112,34 @@ const useEmailAuth = () => {
         `${baseURL}/auth/forgotPassword/${type}`,
         { email }
       );
-      alert(
-        "Reset password email sent successfully, Please check your inbox and come back after updating password."
+
+      toast.success(
+        "Reset password email sent successfully, Please check your inbox and come back after updating password.",
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        }
       );
       navigate("/login"); // Redirect to reset password page
     } catch (error) {
-      alert(error?.response?.data?.message || "Failed to send reset email");
+      toast.error("Failed to send reset email", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       navigate("/login"); // Redirect to login page
     } finally {
       setIsLoading(false);
@@ -93,7 +159,18 @@ const useEmailAuth = () => {
           newPassword,
         }
       );
-      alert(response.data.message);
+
+      toast.success("Password reset successfully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return response;
     } catch (error) {
       return error;
@@ -107,10 +184,31 @@ const useEmailAuth = () => {
     setIsLoading(true);
     try {
       await axios.post(`${baseURL}/auth/logout`);
-      alert("Logged out successfully");
+      toast.success("Logged out successfully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
       navigate("/login");
     } catch (error) {
-      alert("Logout failed");
+      toast.error("Logout failed", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setIsLoading(false);
     }

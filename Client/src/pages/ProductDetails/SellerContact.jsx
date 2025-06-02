@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Spinner from "../../components/Spinner";
 import LeafletMap from "../../components/map/LeafletMap";
 import useFAQs from "../../hooks/useFaq";
+import { toast, Bounce } from "react-toastify";
 
 function SellerContact({ productData }) {
   const { addFAQ, isLoading } = useFAQs();
@@ -19,13 +20,32 @@ function SellerContact({ productData }) {
     if (!productData?._id) return;
 
     const response = await addFAQ(productData._id, feedbackForm.question);
-    console.log(response);
 
     if (response) {
-      alert(response.data.message || "Message sent successfully!");
+      toast.success("Message sent successfully!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       setFeedbackForm((prev) => ({ ...prev, question: "" }));
     } else {
-      alert(response.data.message || "Already  Sent!");
+      toast.info("Already Sent!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       setFeedbackForm((prev) => ({ ...prev, question: "" }));
     }
   };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useReviews from "../../hooks/useReview";
 import Rating from "../../components/Rating";
 import Spinner from "../../components/Spinner";
+import { toast, Bounce } from "react-toastify";
 
 const ProductReviewForm = ({ productId, setBool }) => {
   const { addReview, isLoading } = useReviews();
@@ -28,9 +29,29 @@ const ProductReviewForm = ({ productId, setBool }) => {
         description: "",
       }));
       setBool((prev) => !prev); // Toggle to refresh reviews
-      alert("Review submitted successfully!");
+      toast.success("Review Submitted Successfully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } else {
-      alert("You have already submitted a review for this product.");
+      toast.info("You have already submitted a review for this product.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

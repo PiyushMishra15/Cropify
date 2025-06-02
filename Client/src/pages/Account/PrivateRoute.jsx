@@ -13,15 +13,12 @@ export default function PrivateRoute({ children }) {
     axios
       .get(`${baseURL}/auth/verifyToken`, { withCredentials: true })
       .then((res) => {
-        console.log("Auth success:", res.data);
         setIsAuthenticated(true);
       })
       .catch((err) => {
-        console.log("Auth failed:", err.response?.status);
         if (err.response?.status === 401) {
           navigate("/login");
         } else {
-          console.error("Error verifying token:", err);
           navigate("/login");
         }
         setIsAuthenticated(false);

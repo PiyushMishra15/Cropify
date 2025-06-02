@@ -97,7 +97,7 @@ function FAQ({ productData = { _id: "123" } }) {
               <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
                 {reviewData.map((data, index) => (
                   <div
-                    key={data._id || data.question}
+                    key={index}
                     className="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all duration-300 hover:-translate-y-1"
                   >
                     <div className="flex items-start gap-4">

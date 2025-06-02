@@ -3,6 +3,7 @@ import useOrder from "../../hooks/useOrder";
 import { useSelector } from "react-redux";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
+import { toast, Bounce } from "react-toastify";
 
 const PaymentCard = ({
   totalAmount,
@@ -18,7 +19,17 @@ const PaymentCard = ({
 
   const orderNow = async () => {
     if (customerLatitude === null || customerLongitude === null) {
-      alert("Please allow the location access", "info");
+      toast.info("Please allow the location access!!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return;
     }
 
@@ -37,7 +48,18 @@ const PaymentCard = ({
     // console.log("Order data:", orderData);
 
     addOrder(orderData);
-    alert("Order placed successfully", "success");
+
+    toast.success("Order Placed Successfully!", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
     navigate("/");
   };
 
@@ -76,7 +98,7 @@ const PaymentCard = ({
           className="hover:bg-black    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-5 w-96 md:w-full bg-gray-800 text-base font-medium leading-4 text-white flex flex-row justify-center items-center"
           onClick={() => {
             if (cartData.length === 0) {
-              alert("First add some items to cart", "info");
+              "First add some items to cart", "info";
             } else {
               orderNow();
             }

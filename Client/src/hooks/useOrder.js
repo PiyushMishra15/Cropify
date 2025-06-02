@@ -16,7 +16,6 @@ const useOrders = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error placing order:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -33,7 +32,6 @@ const useOrders = () => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching seller orders:", error);
       throw error;
     } finally {
       setIsLoading(false);
