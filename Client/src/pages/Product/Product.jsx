@@ -1,5 +1,3 @@
-// src/pages/Product/Product.jsx
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +8,6 @@ import EmptyStatetext from "../../components/EmptyStatetext";
 import useProduct from "../../hooks/useProduct";
 import { getCurrentLocation } from "../../utils/getCurrentLocation";
 import LeafletMap from "../../components/map/LeafletMap";
-
 import { useDispatch } from "react-redux";
 import { setLocation } from "../../redux/slices/locationSlice";
 import Navbar from "../../components/NavBar.jsx";
@@ -18,7 +15,6 @@ import Navbar from "../../components/NavBar.jsx";
 function Product() {
   const { type } = useParams();
   const products_per_page = 50;
-
   const dispatch = useDispatch();
 
   const [deliverableProductData, setDeliverableProductData] = useState([]);
@@ -29,6 +25,7 @@ function Product() {
   const [page, setPage] = useState(1);
   const [showMap, setShowMap] = useState(false);
   const [isReachingEnd, setIsReachingEnd] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const [userLocation, setUserLocation] = useState([78.96, 20.59]); // [lng, lat]
   const [selectedLatitude, setSelectedLatitude] = useState(userLocation[1]);
@@ -51,20 +48,19 @@ function Product() {
           })
         );
 
-        // Trigger first fetch explicitly
-        setPage(1);
         setDeliverableProductData([]);
         setNonDeliverableProductData([]);
         setIsReachingEnd(false);
+        setPage(1);
       } catch (err) {
         console.warn("Using default location (78.96, 20.59)");
-        // Don't clear data if location fails — allow default location to fetch
-        setPage(1);
+      } finally {
+        setInitialized(true);
       }
     };
 
     getLocInfo();
-  }, []);
+  }, [dispatch]);
 
   const getProductData = async () => {
     if (!isReachingEnd && selectedLatitude && selectedLongitude) {
@@ -91,9 +87,9 @@ function Product() {
   };
 
   useEffect(() => {
-    getProductData();
+    if (initialized) getProductData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]); // Only run on page change
+  }, [page, initialized]);
 
   return (
     <>
@@ -127,7 +123,7 @@ function Product() {
           >
             {deliverableProductData.map((data, index) => (
               <motion.div
-                key={data.id || index}
+                key={data._id || index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.05, 0.5) }}
@@ -138,7 +134,7 @@ function Product() {
 
             {nonDeliverableProductData.map((data, index) => (
               <motion.div
-                key={data.id || index}
+                key={data._id || `non-${index}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.05, 0.5) }}
@@ -212,6 +208,10 @@ function Product() {
                     onClick={() => {
                       setShowMap(false);
                       setUserLocation([selectedLongitude, selectedLatitude]);
+                      setPage(1);
+                      setDeliverableProductData([]);
+                      setNonDeliverableProductData([]);
+                      setIsReachingEnd(false);
                     }}
                     className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-700 transition-colors duration-200"
                   >
